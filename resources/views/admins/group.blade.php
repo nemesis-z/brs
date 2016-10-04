@@ -34,7 +34,6 @@
 		</div>
 		<button class="btn-flat waves-effect waves-light" type="submit">Добавить</button>
 	</form>
-	{{dump($students)}}
 	@forelse($students as $student)
 		<div class="std">
 			<span>{{$student->last}} {{$student->first}} {{$student->mid}}</span>
