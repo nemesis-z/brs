@@ -112,10 +112,9 @@ class admins extends Controller {
 	//
 	public function toggle_student(App\Student $student) {
 		$sem = Helper::sem($student->group->year);
-		$arr = array('student_id'=>$student->id,'sem'=>$sem);
-		$check = App\Limit::where($arr);
+		$check = App\Limit::where(array('student_id'=>$student->id,'sem'=>$sem))->first();
 		if($check)$check->delete();
-		else $student->limited()->create($arr);
+		else $student->limited()->create(array('sem'=>$sem));
 		return back();
 	}
 	//pages

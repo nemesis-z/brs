@@ -7,10 +7,7 @@ class Helper {
 	private $back;
 	private $closed = false;
 	function __construct() {
-		$this->back = env('APP_BACK', 0);
-	}
-	public function back() {
-		return $this->back;
+		$this->back = (int)env('SEM_BACK', 0);
 	}
 	public function fac_name($ndx) {
 		$names = array(1,2,3,4,5,6,7);
@@ -28,7 +25,7 @@ class Helper {
 	}
 	public function max() {
 		$i=0;
-		$max = array(0,15,20,0,15,15,20,15,20,20);
+		$max = array(15,20,15,15,20,15,20,20);
 		$ret = array();
 		foreach($this->types() as $val)$ret[$val] = $max[$i++];
 		return $ret;

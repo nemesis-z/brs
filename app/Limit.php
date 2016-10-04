@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Limit extends Model {
 	public $timestamps = false;
-	protected $guarded = ['*'];
+	protected $guarded = ['id'];
 }

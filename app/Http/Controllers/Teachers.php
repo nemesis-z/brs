@@ -50,6 +50,7 @@ class teachers extends Controller {
 		// \Illuminate\Support\Facades\DB::enableQueryLog();
 		if(Validator::make($request->all(),array('type'=>'required|regex:'.Helper::types(true),'mark'=>'required|regex:/^[0-9]+$/'))->fails())return $this->logout('m_regex');
 		$d = explode('-', date('Y-n'));
+		if($student->limited)return $this->err('Студент не допущен');
 		if($d[1]<8 && $request->type<'d')return $this->err('Поздно вносить правки за 1-ый семестр :(');
 		$max = Helper::max();
 		if($request->mark > $max[$request->type])return $this->err('Данная оценка не может быть больше '.$max[$request->type]);
@@ -71,6 +72,7 @@ class teachers extends Controller {
 			DB::table('remarks')->insert(array('mark_id'=>$mark->id,'a'=>$from_,'b'=>$mark->mark));
 		} else {
 			$data['user_id'] = $this->user->id;
+			$data['mark'] = $request->mark;
 			App\Mark::create($data);
 		}
 		// dump(\Illuminate\Support\Facades\DB::getQueryLog());
