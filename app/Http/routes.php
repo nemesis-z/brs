@@ -17,11 +17,6 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-	App\User::where('admin','>',0)->get()->each(function($item) {
-		$item->password = bcrypt($item->_pass);
-		$item->save();
-	});
-	return;
 	if(Auth::guest())return redirect('/login');
 	else return redirect('/teacher');
 });
