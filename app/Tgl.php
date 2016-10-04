@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tgl extends Model {
     public $timestamps = false;
-    protected $guarded = ['*'];
+    protected $guarded = ['id','num','hrs','active'];
 
     public function lesson() {
         return $this->belongsTo('App\Lesson');

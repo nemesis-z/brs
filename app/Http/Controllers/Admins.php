@@ -7,6 +7,7 @@ use Validator;
 use App\Facades\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class admins extends Controller {
 
@@ -65,6 +66,33 @@ class admins extends Controller {
 	}
 
 	//
+	public function add_tgl(Request $request, App\User $teacher) {
+		$sv = 'required|regex:/^\d+$/';
+		if(Validator::make($request->all(),array('lesson_id'=>$sv,'group_id'=>$sv,'type'=>$sv,'c'=>$sv))->fails()) {
+			$this->log('add_tgl',null,1);
+			return back()->with('msg','Неправильно введены данные');
+		}
+		$group = App\Group::find($request->group_id);
+		if(!$group||$this->user->admin!=$group->fac) {
+			if(!$group)$this->log('add_tgl','group_not_found:'.$request->group_id,1);
+			else $this->log('add_tgl','_fac',1);
+			Auth::logout();
+			return redirect('/');
+		}
+		$sem = Helper::sem($group->year);
+		$request->merge(array('sem'=>$sem));
+		$check = App\Tgl::where($request->except('_token'))->first();
+		if($check)return back()->with('teacher', $check->user_id);
+		try {
+			$tgl = $teacher->tgls()->create($request->all());
+		} catch (\Illuminate\Database\QueryException $e) {
+			$this->log('add_tgl','pdo',1);
+			Auth::logout();
+			return redirect('/');
+        }
+        $this->log('add_tgl',$tgl->id);
+		return back();
+	}
 	public function add_student(Request $request,App\Group $group) {
 		if($this->user->admin!=$group->fac) {
 			$this->log('add_student','_fac',1);
@@ -81,6 +109,12 @@ class admins extends Controller {
 		return back()->with('msg','Студент успешно добавлен');
 	}
 
+	//
+	public function toggle_student(App\Student $student) {
+		$sem = Helper::sem($student->group->year);
+		$check = App\Limit::firstOrNew(array('student_id'=>$student->id,'sem'=>$sem));
+		return back();
+	}
 	//pages
 	public function lesson(App\Lesson $lesson) {
 		$adds = Helper::adds();
@@ -93,12 +127,12 @@ class admins extends Controller {
 			Auth::logout();
 			return redirect('/');
 		}
-		return view('admins.group', ['id'=>$group->id,'students'=>$group->students]);
+		return view('admins.group', ['id'=>$group->id,'students'=>$group->students->load('limited')]);
 	}
 	public function teacher(App\User $teacher) {
 		$add = array();
-		$add['lessons'] = App\Lesson::all();
-		$add['groups'] = App\Group::where('fac',$this->user->admin);
+		$add['lessons'] = App\Lesson::all()->sortBy('name');
+		$add['groups'] = App\Group::where('fac',$this->user->admin)->orderBy('name')->get();
 		$add['types'] = Helper::type();
 		$add['cs'] = Helper::c();
 		return view('admins.teacher', ['add'=>$add,'teacher'=>$teacher,'lessons'=>$teacher->tgls->load('lesson')->map(function($tgl) {return $tgl->lesson;})->unique('id')->sortBy('name')]);

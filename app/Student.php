@@ -11,4 +11,10 @@ class Student extends Model {
 	public function marks() {
     	return $this->hasMany('App\Mark');
     }
+    public function limited() {
+    	return $this->hasOne('App\Limit');
+    }
+    public function group() {
+    	return $this->belongsTo('App\Group');
+    }
 }

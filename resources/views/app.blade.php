@@ -119,7 +119,11 @@
                     @if (Auth::guest())
                         <li><a class="waves-effect waves-light" href="{{ url('/login') }}">Войти</a></li>
                     @else
-                        <li><a class="waves-effect waves-light" href="{{ url('/logout') }}">Выйти</a></li>
+                        @if(!Auth::user()->isAdmin()||Request::is('admin*'))
+                            <li><a class="waves-effect waves-light" href="{{ url('/logout') }}">Выйти</a></li>
+                        @else
+                            <li><a class="waves-effect waves-light" href="/admin">Админка</a></li>
+                        @endif
                     @endif
                 </ul>
             </div>

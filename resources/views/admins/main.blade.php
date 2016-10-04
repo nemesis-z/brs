@@ -1,4 +1,7 @@
 @extends('app')
+@section('nav')
+	<a href="/teacher" class="waves-effect waves-light breadcrumb">Страница преподов</a>
+@endsection
 @section('style')
 	.open_e {
 		cursor:pointer;

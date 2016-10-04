@@ -43,7 +43,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function() {
 	Route::get('/lesson/{lesson}', 'admins@lesson');
 	Route::get('/group/{group}', 'admins@group');
 	Route::get('/teacher/{teacher}', 'admins@teacher');
-	Route::post('/group/{group}/add_student', 'admins@add_student');
+	Route::get('/toggle/{student}', 'admins@toggle_student');
+	Route::post('/group/{group}/add_student', 'adminss@add_student');
+	Route::post('/teacher/{teacher}/add', 'admins@add_tgl');
 });
 
 Route::group(['prefix' => 'student'], function() {
