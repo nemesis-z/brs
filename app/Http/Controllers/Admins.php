@@ -112,8 +112,9 @@ class admins extends Controller {
 	//
 	public function toggle_student(App\Student $student) {
 		$sem = Helper::sem($student->group->year);
-		$check = App\Limit::firstOrNew(array('student_id'=>$student->id,'sem'=>$sem));
-		return back();
+		$check = App\Limit::where(array('student_id'=>$student->id,'sem'=>$sem));
+		if($check)$check->delete();
+		else $student->limited()->create(array(''));
 	}
 	//pages
 	public function lesson(App\Lesson $lesson) {
@@ -143,7 +144,7 @@ class admins extends Controller {
 		$fac = $fac<0?0:$fac;
 		$adds = Helper::adds();
 		$lessons = App\Tgl::join('lessons', 'lessons.id', '=', 'tgls.lesson_id')->join('groups', 'groups.id', '=', 'tgls.group_id')->whereRaw("`tgls`.`sem` = ({$adds[0]}-`groups`.`year`)*2+{$adds[1]}")->select('lessons.*')->groupBy('lessons.id')->orderBy('lessons.name')->get();
-		return view('admins.main', ['teachers'=>App\User::orderBy('last')->get(), 'lessons'=>$lessons, 'groups'=>App\Group::where('fac',!$fac?'>=':'=',$fac)->orderBy('year','desc')->orderBy('name')->get()]);
+		return view('admins.main', ['teachers'=>App\User::where('admin',0)->orderBy('last')->get(), 'lessons'=>$lessons, 'groups'=>App\Group::where('fac',!$fac?'>=':'=',$fac)->orderBy('year','desc')->orderBy('name')->get()]);
 	}
 
 	//cast

@@ -4,8 +4,14 @@ namespace App\Classes;
 use App;
 
 class Helper {
-	private $back = 2;
+	private $back;
 	private $closed = false;
+	function __construct() {
+		$this->back = env('APP_BACK', 0);
+	}
+	public function back() {
+		return $this->back;
+	}
 	public function fac_name($ndx) {
 		$names = array(1,2,3,4,5,6,7);
 		return isset($names[$ndx])?$names[$ndx]:'Неизвестно';

@@ -4,12 +4,14 @@ namespace App;
 
 use App\Facades\Helper;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
 
 class User extends Authenticatable {
 	// public $timestamps = false;
     protected $fillable = ['name', 'email', 'password', '_pass', 'first', 'last', 'mid'];
     protected $hidden = ['password', 'remember_token', '_pass', 'send'];
     
+
     public function isAdmin() {
         return $this->admin != 0;
     }
