@@ -13,9 +13,6 @@
 
 use App\User;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
-
-// нтф - worplan.xls - хуйня
 
 /*function rp() { 
 	$pass=""; 
