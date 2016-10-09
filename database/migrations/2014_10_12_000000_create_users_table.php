@@ -22,7 +22,6 @@ class CreateUsersTable extends Migration
             $table->string('email')->nullable();
             $table->string('_pass')->nullable();
             $table->tinyInteger('admin')->default(0);
-            $table->tinyInteger('fac')->nullable();
             $table->boolean('sent')->default(0);
             $table->tinyInteger('warns')->default(0);
             $table->rememberToken();

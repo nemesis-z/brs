@@ -22,10 +22,10 @@ class CreateTglsTable extends Migration
             $table->foreign('lesson_id')->references('id')->on('lessons')->onDelete('cascade');
             $table->tinyInteger('type');
             $table->tinyInteger('c');
-            $table->tinyInteger('num');
-            $table->tinyInteger('hrs');
+            $table->tinyInteger('num')->nullable();
+            $table->tinyInteger('hrs')->default(0);
             $table->tinyInteger('sem');
-            $table->tinyInteger('active');
+            $table->tinyInteger('active')->default(1);
         });
     }
      /**

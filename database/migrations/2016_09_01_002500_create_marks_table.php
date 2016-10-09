@@ -22,7 +22,7 @@ class CreateMarksTable extends Migration
             $table->foreign('lesson_id')->references('id')->on('lessons')->onDelete('cascade');
             $table->tinyInteger('sem');
             $table->tinyInteger('mark');
-            $table->char('type',1);
+            $table->char('type',4);
             $table->timestamps();
         });
     }

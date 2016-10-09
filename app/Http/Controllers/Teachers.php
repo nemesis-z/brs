@@ -48,7 +48,7 @@ class teachers extends Controller {
 
 	public function setMark(Request $request,App\Lesson $lesson,App\Group $group,App\Student $student) {
 		// \Illuminate\Support\Facades\DB::enableQueryLog();
-		if(Validator::make($request->all(),array('type'=>'required|regex:'.Helper::types(true),'mark'=>'required|regex:/^[0-9]+$/'))->fails())return $this->logout('m_regex');
+		if(Validator::make($request->all(),array('type'=>array('required','regex:'.Helper::types(true)),'mark'=>'required|regex:/^[0-9]+$/'))->fails())return $this->logout('m_regex');
 		$d = explode('-', date('Y-n'));
 		if($student->limited)return $this->err('Студент не допущен');
 		if($d[1]<8 && $request->type<'d')return $this->err('Поздно вносить правки за 1-ый семестр :(');

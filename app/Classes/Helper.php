@@ -3,6 +3,8 @@ namespace App\Classes;
 
 use App;
 
+// 1 - фапи, 2 - нтф, 3 - гпф, 4 - гф, 5 - нмф, 6 - фэу
+
 class Helper {
 	private $back;
 	private $closed = false;
@@ -14,14 +16,14 @@ class Helper {
 		return isset($names[$ndx])?$names[$ndx]:'Неизвестно';
 	}
 	public function types($regex = false, $avg = false) {
-		$ret = array('a','b','c','d','e','f','g','h');
+		$ret = array('t1','r1','p','t2','r2','s2','d','pr');
 		if($avg) {
 			$c = count($ret);
 			$tmp = $ret[$c-1];
 			$ret[$c-1] = 'avg';
 			$ret[$c] = $tmp;
 		}
-		return !$regex?$ret:'/^['.implode($ret).']$/';
+		return !$regex?$ret:'/^('.(implode('|',$ret)).')$/';
 	}
 	public function max() {
 		$i=0;
