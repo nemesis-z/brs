@@ -2,10 +2,11 @@
 @section('title', 'Результаты группы')
 @section('nav')
 	<a href="/teacher" class="waves-effect waves-light breadcrumb">Главная</a>
-	<a href="/teacher/lesson/{{$lesson_id}}" class="waves-effect waves-light breadcrumb">Выбор группы</a>
+	<a href="/teacher/lesson/{{$lesson->id}}" class="waves-effect waves-light breadcrumb">Выбор группы</a>
 	<span class="breadcrumb">Результаты группы</span>
 @endsection
 @section('content')
+	<div class="hint">Группа {{$group->name}}, {{$lesson->name}}</div>
 	@include('common.list')
 @endsection
 @section('style')
@@ -87,7 +88,7 @@ function removePicker(p) {
 					onSet: function(ctx) {
 						loader();
 						var d = Math.round(ctx.select/1000);
-						a('/date/{{$lesson_id}}/{{$group_id}}',{date:d,c:el.data('c')},function(d) {
+						a('/date/{{$lesson->id}}/{{$group->id}}',{date:d,c:el.data('c')},function(d) {
 							if(!d.ok)return alert('Что-то пошло не так');
 							el.find('tr').each(function(ndx) {
 								if(!ndx)$('<td>').attr('data-x',d.id).addClass('tdd').html('<span class="rotate">'+d.fd+'</span>').appendTo(this);
@@ -119,7 +120,7 @@ function removePicker(p) {
 				_val = +_val;
 				is = true;
 				loader();
-				a('/mark/{{$lesson_id}}/{{$group_id}}/'+_ds,{mark:_val,type:_dt},function(d) {
+				a('/mark/{{$lesson->id}}/{{$group->id}}/'+_ds,{mark:_val,type:_dt},function(d) {
 					if(!d.ok)return alert("Что-то пошло не так");
 					avg.text(+avg.text()-(val-_val));
 					that.text(_val);

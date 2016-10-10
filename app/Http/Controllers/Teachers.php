@@ -42,7 +42,7 @@ class teachers extends Controller {
 	public function getList(App\Lesson $lesson,App\Group $group) {
 		$tgls = $this->user->tgls->where('group_id',$group->id)->where('lesson_id',$lesson->id);
 		if(!$tgls)abort(404);
-		return view('teachers.list', array_merge(Helper::getMarks($group,$lesson,$tgls),array('lesson_id'=>$lesson->id,'group_id'=>$group->id)));
+		return view('teachers.list', array_merge(Helper::getMarks($group,$lesson,$tgls),array('lesson'=>$lesson,'group'=>$group)));
 	}
 
 
