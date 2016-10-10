@@ -23,7 +23,7 @@ class admins extends Controller {
 
 	// adds
 	private function add_lesson($request) {
-		$v = Validator::make($request->all(), ['name'=>'required|unique:lessons|regex:/^[А-Я а-я]+$/u']);
+		$v = Validator::make($request->all(), ['name'=>'required|unique:lessons|regex:/^[А-Я а-я\-]+$/u']);
 		if($v->fails()) {
 			$this->log('add_lesson',$request->name,1);
 			return back()->with('msg',$v->errors()->first('name'));
