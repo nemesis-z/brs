@@ -117,6 +117,19 @@ class admins extends Controller {
 		else $student->limited()->create(array('sem'=>$sem));
 		return back();
 	}
+
+	// deletes 
+
+	public function delete_student(App\Student $student) {
+		if($student->group->fac!=$this->user->admin) {
+			$this->log('delete_student','_fac',1);
+			Auth::logout();
+			return redirect('/');
+		}
+		$student->delete();
+		return back()->with('msg', 'Студент успешно удален');
+	}
+
 	//pages
 	public function lesson(App\Lesson $lesson) {
 		$adds = Helper::adds();
