@@ -3,7 +3,7 @@ namespace App\Classes;
 
 use App;
 
-// 1 - фапи, 2 - нтф, 3 - гпф, 4 - гф, 5 - нмф, 6 - фэу
+// 1 - фапи, 2 - нтф, 3 - гпф, 4 - гф, 5 - нмф, 6 - фэу, 7 - сф
 
 class Helper {
 	private $back;

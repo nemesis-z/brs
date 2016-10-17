@@ -51,10 +51,10 @@ jQuery.extend( jQuery.fn.pickadate.defaults, {
     weekdaysShort: [ 'вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб' ],
     today: 'сегодня',
     clear: false,
-    close: 'отмена',
+    close: 'ok',
     firstDay: 1,
     formatSubmit: 'dd/mm/yyyy',
-    closeOnSelect: true
+    closeOnSelect: !true
 });
 function removePicker(p) {
 	p.stop();
@@ -84,10 +84,19 @@ function removePicker(p) {
 			if(is)return;
 			is = true;
 			setTimeout(function() {
+				var sd=null;
 				$('<input>').css('display','none').appendTo('body').pickadate({
 					onSet: function(ctx) {
+						if(!ctx.select)return;
+						sd = Math.round(ctx.select/1000);
+					},
+					onClose: function() {
+						removePicker(this);
+						if(!sd) {
+							is = false;
+							return;
+						}
 						loader();
-						var d = Math.round(ctx.select/1000);
 						a('/date/{{$lesson->id}}/{{$group->id}}',{date:d,c:el.data('c')},function(d) {
 							if(!d.ok)return alert('Что-то пошло не так');
 							el.find('tr').each(function(ndx) {
@@ -99,10 +108,6 @@ function removePicker(p) {
 							loader(!is)
 						});
 						removePicker(this);
-					},
-					onClose: function() {
-						removePicker(this);
-						is = false;
 					}
 				}).pickadate('picker').open();
 			},1);

@@ -14,27 +14,80 @@
 use App\User;
 use Illuminate\Support\Facades\Auth;
 
-/*function rp() { 
+function rp() { 
 	$pass=""; 
 	$alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789"; 
 	for ($i = 0; $i < 8; $i++)$pass .= substr($alphabet, rand(0, strlen($alphabet)-1),1); 
 	return $pass; 
-}*/
+}
 
-Route::get('/', function () {
-	/*Excel::batch('_gpf_e', function($reader, $file) {
-		return;
-		$reader->noHeading();
-		$x = -1;
-		$g = null;
-		$cyr = array('а','б','в','г','д','е', 'ё', 'ж','з','и','й','к','л','м','н','о','п','р','с','т','у', 
+function sp($t) {
+	$cyr = array('а','б','в','г','д','е', 'ё', 'ж','з','и','й','к','л','м','н','о','п','р','с','т','у', 
 'ф','х','ц','ч','ш','щ','ъ','ы','ь', 'э', 'ю','я','А','Б','В','Г','Д','Е','Ё','Ж','З','И','Й','К','Л','М','Н','О','П','Р','С','Т','У', 
 'Ф','Х','Ц','Ч','Ш','Щ','Ъ','Ы','Ь','Э', 'Ю','Я',' ' ); 
 	$lat = array( 'a','b','v','g','d','e','e', 'zh','z','i','y','k','l','m','n','o','p','r','s','t','u', 
 'f' ,'h' ,'ts' ,'ch','sh' ,'sh' ,'a' ,'i', 'y' ,'e','yu' ,'ya','A','B','V','G','D','E','E','Zh', 
 'Z','I','Y','K','L','M','N','O','P','R','S','T','U', 
 'F' ,'H' ,'Ts' ,'Ch','Sh' ,'Sh' ,'A' ,'I', 'Y' ,'E', 'Yu' ,'Ya','' );
-		$reader->each(function($row) use(&$x, &$g, $cyr, $lat, $file) {
+	return str_replace($cyr, $lat, $t);
+}
+
+Route::get('/', function () {
+	/*Excel::load('a.xls', function($reader) {
+		$reader->noHeading();
+		$reader->each(function($sheet) {
+			if(!$sheet[1])return;
+			preg_match('/^([а-яА-Я]+-)(\d+)(.*?)-?([а-яА-Я]*)$/',mb_strtoupper(trim($sheet[1]),'utf-8'),$name);
+			$name = $name[1].$name[2].$name[3].mb_strtolower($name[4],'utf-8');
+			preg_match('/\d+/', $name, $m);
+			$year = "20$m[0]";
+			$g = App\Group::where('name',$name)->first();
+			if(!$g)return;// dump(1);
+			// $g->save();
+			$lesson = App\Lesson::firstOrCreate(array('name'=>trim($sheet[3])));
+
+			$flm = explode(" ", $sheet[6]);
+			if(count($flm)<3) {
+				// dump('name: '.$name);
+				// dump($flm);
+				return;
+			}
+			$last = $flm[0];
+			$fm = explode('.', $flm[1]);
+			$login=strtolower(sp(mb_convert_encoding($last.$fm[0].$fm[1], 'utf-8')));
+			$user = App\User::where('name',$login)->first();
+			if(!$user) {
+				$pass = rp();
+				$user = new App\User(array(
+					'name'=>$login,
+					'password'=>bcrypt($pass),
+					'first'=>$fm[0],
+					'last'=>$last,
+					'mid'=>$fm[1],
+					'_pass'=>$pass
+				));
+				$user->save();
+			}
+			$tgl = new App\Tgl(array(
+				'user_id'=>$user->id,
+				'group_id'=>$g->id,
+				'lesson_id'=>$lesson->id,
+				'type'=>(int)$sheet[5],
+				'c'=>1,
+				'num'=>(int)$sheet[2],
+				'sem'=>\App\Facades\Helper::sem($g->year)
+			));
+			$tgl->save();
+		});
+	});
+	return;
+	/*Excel::batch('b', function($reader, $file) {
+		return;
+		$reader->noHeading();
+		$x = -1;
+		$g = null;
+		
+		$reader->each(function($row) use(&$x, &$g, $file,&$name) {
 			if($x!=999)++$x;
 			if($x!=4&&$x<11)return;
 			if($x==11&&$row[2]!=1)dump('err: '.$file);
@@ -45,12 +98,15 @@ Route::get('/', function () {
 			if($x==999)return dump('999');
 			if($x==4) {
 				$name = explode(": ", $row[2]);
-				$name = $name[1];
+				$name = trim($name[1],'.');
 				$g = App\Group::where('name',$name)->first();
-				if(!$g)dump('group: '.$name);
+				if(!$g) {
+					dump('group: '.$name);
+					return false;
+				}
 				return;
 			}
-			$lesson = App\Lesson::firstOrCreate(array('name'=>$row[3]));
+			$lesson = App\Lesson::firstOrCreate(array('name'=>trim($row[3])));
 			$arr = array($row[6],$row[8],$row[10]);
 			$type = -1;
 			$tmp = array(16,18,17,20,22,19);
@@ -64,13 +120,14 @@ Route::get('/', function () {
 				$name = $arr[$i];
 				if(!$name)continue;
 				$flm = explode(" ", $name);
-				if(count($flm)!=3) {
+				if(count($flm)<3) {
 					// dump('name: '.$name);
+					dump($flm);
 					continue;
 				}
 				$last = $flm[0];
 				$fm = explode('.', $flm[1]);
-				$login=strtolower(str_replace($cyr,$lat,mb_convert_encoding($last.$fm[0].$fm[1], 'utf-8')));
+				$login=strtolower(sp(mb_convert_encoding($last.$fm[0].$fm[1], 'utf-8')));
 				$user = App\User::where('name',$login)->first();
 				if(!$user) {
 					$pass = rp();
@@ -98,7 +155,7 @@ Route::get('/', function () {
 		});
 	});
 	return;
-	Excel::load('asd.xlsx', function($reader) {
+	/*Excel::load('asd.xlsx', function($reader) {
 		return;
 		// фапи
 		$reader->noHeading();
@@ -162,33 +219,6 @@ Route::get('/', function () {
 	    		'number'=>''
 	    	));
 			// $s->save();
-		});
-	});
-	// return;
-	Excel::load('d.xlsx', function($reader) {
-		return;
-		// нтф
-		$reader->noHeading();
-		$reader->each(function($sheet) {
-			preg_match('/^([а-яА-Я]+-)(\d+)(.*?)-?([а-яА-Я]*)$/',mb_strtoupper($sheet->getTitle(),'utf-8'),$name);
-			$name = $name[1].$name[2].$name[3].mb_strtolower($name[4],'utf-8');
-			
-			preg_match('/\d+/', $name, $m);
-			$year = "20$m[0]";
-			$g = new App\Group(array('name'=>$name,'year'=>$year,'fac'=>2));
-			// $g->save();
-			dump($g->id);
-			$sheet->each(function($row) use(&$g) {
-				if(!$row[2])return;
-				$s = new App\Student(array(
-					'group_id'=>$g->id,
-		    		'first'=>$row[2],
-		    		'last'=>$row[1],
-		    		'mid'=>$row[3],
-		    		'number'=>(string)$row[4]
-		    	));
-		    	// $s->save();
-			});
 		});
 	});
 	// return;
