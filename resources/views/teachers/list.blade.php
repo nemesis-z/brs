@@ -97,7 +97,7 @@ function removePicker(p) {
 							return;
 						}
 						loader();
-						a('/date/{{$lesson->id}}/{{$group->id}}',{date:d,c:el.data('c')},function(d) {
+						a('/date/{{$lesson->id}}/{{$group->id}}',{date:sd,c:el.data('c')},function(d) {
 							if(!d.ok)return alert('Что-то пошло не так');
 							el.find('tr').each(function(ndx) {
 								if(!ndx)$('<td>').attr('data-x',d.id).addClass('tdd').html('<span class="rotate">'+d.fd+'</span>').appendTo(this);
