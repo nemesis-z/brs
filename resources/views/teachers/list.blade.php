@@ -88,7 +88,7 @@ function removePicker(p) {
 				$('<input>').css('display','none').appendTo('body').pickadate({
 					onSet: function(ctx) {
 						if(!ctx.select)return;
-						sd = Math.round(ctx.select/1000);
+						sd = Math.round(ctx.select/1000)+5*60*60;
 					},
 					onClose: function() {
 						removePicker(this);
