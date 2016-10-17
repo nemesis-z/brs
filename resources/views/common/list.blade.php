@@ -75,7 +75,7 @@
 					<td style="width:240px;"></td>
 					@foreach($jj['dates'] as $date)
 						<td data-x="{{$date['id']}}" class="tdd">
-							<span class="rotate">{{date("d/m/y",$date['zz'])}}</span>
+							<span class="rotate">{{date("d/m/y",$date['zz']+5*60*60)}}</span>
 						</td>
 					@endforeach
 				</tr>
