@@ -10,4 +10,7 @@ class Jdate extends Model {
 	public function marks() {
 		return $this->hasMany('App\Jmark');
 	}
+	public function tgl() {
+		return $this->belongsTo('App\Tgl');
+	}
 }

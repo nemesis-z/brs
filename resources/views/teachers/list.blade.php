@@ -41,6 +41,22 @@
 		right:-58px;
 		top: -5px;
 	}
+	.tdd {
+		cursor:pointer;
+	}
+	.tdd:hover>.hoh, .soh {
+		display:none;
+	}
+	.tdd:hover>.soh {
+		display:block;
+	}
+	.jt23 {
+		padding: 10px 0;
+	    text-align: center;
+	    border-top: 1px solid #eee;
+	    border-bottom: 1px solid #eee;
+	    margin: 5px 0;
+	}
 @endsection
 @section('script')
 jQuery.extend( jQuery.fn.pickadate.defaults, {
@@ -62,6 +78,23 @@ function removePicker(p) {
 }
 +function() {
 	var is = false;
+	function delDate() {
+		var el = $(this);
+		var id = el.data('x');
+		if(is||isNaN(id=parseInt(id)))return;
+		is = true;
+		loader();
+		a('/delete/date/'+id,{},function(d) {
+			if(!d.ok)return alert("Что-то пошло не так");
+			var ndx = el.index();
+			el.parent().parent().children('tr').each(function(){
+				$(this).children().eq(ndx).remove();
+			})
+		}).always(function() {
+			is = false;
+			loader(!0);
+		});
+	}
 	function _absent() {
 		if(is)return;
 		var that=$(this),absent=that.attr('absent');
@@ -78,6 +111,7 @@ function removePicker(p) {
 			loader(!is);
 		});
 	}
+	$('.tdd').click(delDate);
 	$('.table_wrapper').each(function(ndx,el) {
 		el = $(el);
 		$('<a>').addClass('btn-floating btn-large waves-effect waves-light red').html('<i class="material-icons">add</i>').click(function() {
@@ -100,7 +134,7 @@ function removePicker(p) {
 						a('/date/{{$lesson->id}}/{{$group->id}}',{date:sd,c:el.data('c')},function(d) {
 							if(!d.ok)return alert('Что-то пошло не так');
 							el.find('tr').each(function(ndx) {
-								if(!ndx)$('<td>').attr('data-x',d.id).addClass('tdd').html('<span class="rotate">'+d.fd+'</span>').appendTo(this);
+								if(!ndx)$('<td>').attr('data-x',d.id).addClass('tdd').html('<span class="hoh rotate">'+d.fd+'</span><span class="soh rotate">Удалить</span>').appendTo(this).click(delDate);
 								else $('<td>').addClass('_absent').click(_absent).appendTo(this);
 							});
 						}).always(function() {

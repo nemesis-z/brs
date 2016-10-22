@@ -95,13 +95,19 @@ class teachers extends Controller {
 	}
 	public function setJMark(Request $request, App\Student $student,App\Jdate $date) {
 		if(Validator::make($request->all(),array('mark'=>'required|numeric'))->fails())return $this->logout('jm_regex');
-		if(!$this->user->tgls->contains('id',$date->tgl_id))return $this->logout('jm_!id');
+		if($this->user->id!=$date->tgl->user_id)return $this->logout('jm_!id');
 		$jm = $date->marks->where('student_id',$student->id)->first();
 		if($jm) {
 			$jm->delete();
 			// $jm->mark = $mark;
 			// $jm->save();
 		} else $date->marks()->create(array('student_id'=>$student->id,'mark'=>$request->mark));
+		return response()->json(array('ok'=>1));
+	}
+
+	public function deleteJDate(App\Jdate $date) {
+		if($this->user->id!=$date->tgl->user_id)return $this->logout('djd_!id');
+		$date->delete();
 		return response()->json(array('ok'=>1));
 	}
 }
