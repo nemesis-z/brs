@@ -1,4 +1,5 @@
 @extends('app')
+@section('title', 'Группа: '.$group->name)
 @section('nav')
 	<a href="/admin" class="waves-effect waves-light breadcrumb">Главная</a>
 @endsection
@@ -17,7 +18,7 @@
 	}
 @endsection	
 @section('content')
-	<form action="/admin/group/{{$id}}/add_student" method="post" class="row">
+	<form action="/admin/group/{{$group->id}}/add_student" method="post" class="row">
 		{!!csrf_field()!!}
 		<div class="input-field col s3">
 			<input type="text" name="last">

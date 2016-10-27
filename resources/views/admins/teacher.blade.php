@@ -1,4 +1,5 @@
 @extends('app')
+@section('title', 'Преподаватель: '.$teacher->last)
 @section('nav')
 	<a href="/admin" class="waves-effect waves-light breadcrumb">Главная</a>
 @endsection

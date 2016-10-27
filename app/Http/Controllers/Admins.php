@@ -152,7 +152,7 @@ class admins extends Controller {
 			Auth::logout();
 			return redirect('/');
 		}
-		return view('admins.group', ['id'=>$group->id,'students'=>$group->students->load('limited')]);
+		return view('admins.group', ['group'=>$group,'students'=>$group->students->load('limited')]);
 	}
 	public function teacher(App\User $teacher) {
 		$add = array();
