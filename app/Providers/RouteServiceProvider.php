@@ -29,6 +29,7 @@ class RouteServiceProvider extends ServiceProvider
         $router->model('teacher', 'App\User');
         $router->model('student', 'App\Student');
         $router->model('date', 'App\Jdate');
+        $router->model('tgl', 'App\Tgl');
         $router->pattern('id', '[0-9]+');
         parent::boot($router);
     }

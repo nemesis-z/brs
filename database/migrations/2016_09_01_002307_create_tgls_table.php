@@ -26,6 +26,7 @@ class CreateTglsTable extends Migration
             $table->tinyInteger('hrs')->default(0);
             $table->tinyInteger('sem');
             $table->tinyInteger('active')->default(1);
+            $table->softDeletes();
         });
     }
      /**

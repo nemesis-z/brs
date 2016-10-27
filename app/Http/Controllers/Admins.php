@@ -130,6 +130,16 @@ class admins extends Controller {
 		return back()->with('msg', 'Студент успешно удален');
 	}
 
+	public function delete_tgl(App\Tgl $tgl) {
+		if($tgl->group->fac!=$this->user->admin) {
+			$this->log('delete_tgl','_fac',1);
+			Auth::logout();
+			return redirect('/');
+		}
+		$tgl->delete();
+		return back()->with('msg', 'Предмет успешно откреплен');
+	}
+
 	//pages
 	public function lesson(App\Lesson $lesson) {
 		$adds = Helper::adds();
@@ -150,7 +160,8 @@ class admins extends Controller {
 		$add['groups'] = App\Group::where('fac',$this->user->admin)->orderBy('name')->get();
 		$add['types'] = Helper::type();
 		$add['cs'] = Helper::c();
-		return view('admins.teacher', ['add'=>$add,'teacher'=>$teacher,'lessons'=>$teacher->tgls->load('lesson')->map(function($tgl) {return $tgl->lesson;})->unique('id')->sortBy('name')]);
+		$tgls = $teacher->tgls->load('group')->load('lesson')->sortBy('lesson.name');
+		return view('admins.teacher', ['add'=>$add,'teacher'=>$teacher,'tgls'=>$tgls]);
 	}
 
 	public function main() {

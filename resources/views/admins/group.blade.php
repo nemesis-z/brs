@@ -1,4 +1,7 @@
 @extends('app')
+@section('nav')
+	<a href="/admin" class="waves-effect waves-light breadcrumb">Главная</a>
+@endsection
 @section('style')
 	.std {
 		padding:10px;

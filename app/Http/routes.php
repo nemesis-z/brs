@@ -34,6 +34,72 @@ function sp($t) {
 
 
 Route::get('/', function () {
+	/*Excel::load('asd.xls', function($reader) {
+		$reader->noHeading();
+		$reader->each(function($sheet) {
+			if(!$sheet[1])return;
+			if(!preg_match('/^([а-яА-Я]+-)(\d+)(.*?)-?([а-яА-Я]*)$/',mb_strtoupper(trim($sheet[1]),'utf-8'),$name))return;
+			$name = $name[1].$name[2].$name[3].mb_strtolower($name[4],'utf-8');
+			preg_match('/\d+/', $name, $m);
+			$year = "20$m[0]";
+			$g = App\Group::where('name',$name)->first();
+			if(!$g)return;// dump($name);
+			// $g->save();
+			$lesson = App\Lesson::firstOrCreate(array('name'=>trim($sheet[3])));
+
+			$flm = explode(" ", $sheet[6]);
+			if(count($flm)<3) {
+				// dump('name: '.$name);
+				// dump($flm);
+				return;
+			}
+			$last = $flm[0];
+			$fm = explode('.', $flm[1]);
+			$login=strtolower(sp(mb_convert_encoding($last.$fm[0].$fm[1], 'utf-8')));
+			$user = App\User::where('name',$login)->first();
+			if(!$user) {
+				$pass = rp();
+				$user = new App\User(array(
+					'name'=>$login,
+					'password'=>bcrypt($pass),
+					'first'=>$fm[0],
+					'last'=>$last,
+					'mid'=>$fm[1],
+					'_pass'=>$pass
+				));
+				// $user->save();
+			}
+			$tgl = new App\Tgl(array(
+				'user_id'=>$user->id,
+				'group_id'=>$g->id,
+				'lesson_id'=>$lesson->id,
+				'type'=>(int)$sheet[5],
+				'c'=>1,
+				'num'=>(int)$sheet[2],
+				'sem'=>\App\Facades\Helper::sem($g->year)
+			));
+			$x = App\Tgl::where(array(
+				'user_id'=>$user->id,
+				'group_id'=>$g->id,
+				'lesson_id'=>$lesson->id,
+				'type'=>(int)$sheet[5],
+				'c'=>1,
+				// 'num'=>(int)$sheet[2],
+				'sem'=>\App\Facades\Helper::sem($g->year)
+			))->first();
+			if(!$x)dump(array(
+				'user_id'=>$user->id,
+				'group_id'=>$g->id,
+				'lesson_id'=>$lesson->id,
+				'type'=>(int)$sheet[5],
+				'c'=>1,
+				'num'=>(int)$sheet[2],
+				'sem'=>\App\Facades\Helper::sem($g->year)
+			));
+			// $tgl->save();
+		});
+	});
+	return;
 	/*Excel::batch('b', function($reader, $file) {
 		// return;
 		$reader->noHeading();
@@ -139,55 +205,6 @@ Route::get('/', function () {
 		});
 	});
 	return;
-	Excel::load('a.xls', function($reader) {
-		$reader->noHeading();
-		$reader->each(function($sheet) {
-			if(!$sheet[1])return;
-			preg_match('/^([а-яА-Я]+-)(\d+)(.*?)-?([а-яА-Я]*)$/',mb_strtoupper(trim($sheet[1]),'utf-8'),$name);
-			$name = $name[1].$name[2].$name[3].mb_strtolower($name[4],'utf-8');
-			preg_match('/\d+/', $name, $m);
-			$year = "20$m[0]";
-			$g = App\Group::where('name',$name)->first();
-			if(!$g)return;// dump(1);
-			// $g->save();
-			$lesson = App\Lesson::firstOrCreate(array('name'=>trim($sheet[3])));
-
-			$flm = explode(" ", $sheet[6]);
-			if(count($flm)<3) {
-				// dump('name: '.$name);
-				// dump($flm);
-				return;
-			}
-			$last = $flm[0];
-			$fm = explode('.', $flm[1]);
-			$login=strtolower(sp(mb_convert_encoding($last.$fm[0].$fm[1], 'utf-8')));
-			$user = App\User::where('name',$login)->first();
-			if(!$user) {
-				$pass = rp();
-				$user = new App\User(array(
-					'name'=>$login,
-					'password'=>bcrypt($pass),
-					'first'=>$fm[0],
-					'last'=>$last,
-					'mid'=>$fm[1],
-					'_pass'=>$pass
-				));
-				$user->save();
-			}
-			$tgl = new App\Tgl(array(
-				'user_id'=>$user->id,
-				'group_id'=>$g->id,
-				'lesson_id'=>$lesson->id,
-				'type'=>(int)$sheet[5],
-				'c'=>1,
-				'num'=>(int)$sheet[2],
-				'sem'=>\App\Facades\Helper::sem($g->year)
-			));
-			$tgl->save();
-		});
-	});
-	return;
-	
 	Excel::load('asd.xlsx', function($reader) {
 		return;
 		// фапи
@@ -344,6 +361,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function() {
 	Route::post('/group/{group}/add_student', 'admins@add_student');
 	Route::post('/teacher/{teacher}/add', 'admins@add_tgl');
 	Route::get('/delete/student/{student}', 'admins@delete_student');
+	Route::get('/delete/lesson/{tgl}', 'admins@delete_tgl');
 });
 
 Route::group(['prefix' => 'student'], function() {
