@@ -12,6 +12,10 @@ class User extends Authenticatable {
     protected $hidden = ['password', 'remember_token', '_pass', 'send'];
     
 
+    public function _name() {
+        return $this->last.' '.mb_substr($this->first,0,1,'utf-8').'. '.mb_substr($this->mid,0,1,'utf-8').'.';
+    }
+
     public function isAdmin() {
         return $this->admin != 0;
     }

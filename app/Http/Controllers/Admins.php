@@ -147,12 +147,13 @@ class admins extends Controller {
 		return view('admins.lesson',['lesson'=>$lesson,'teachers'=>$teachers]);
 	}
 	public function group(App\Group $group) {
+		// \Illuminate\Support\Facades\DB::enableQueryLog();
 		if($this->user->admin!=$group->fac) {
 			$this->log('group','_fac',1);
 			Auth::logout();
 			return redirect('/');
 		}
-		return view('admins.group', ['group'=>$group,'students'=>$group->students->load('limited')]);
+		return view('admins.group', ['tgls'=>$group->tgls->load('lesson')->load('user'),'group'=>$group,'students'=>$group->students->load('limited')]);
 	}
 	public function teacher(App\User $teacher) {
 		$add = array();

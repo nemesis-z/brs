@@ -7,7 +7,7 @@
 	$('select').material_select();
 @endsection
 @section('content')
-	{{$teacher->last}} {{mb_substr($teacher->first,0,1,'utf-8')}}. {{mb_substr($teacher->mid,0,1,'utf-8')}}.
+	<h5>{{$teacher->_name()}}</h5>
 	<form class="row" method="post" action="/admin/teacher/{{$teacher->id}}/add">
 		{{csrf_field()}}
 		<div class="input-field col s4">

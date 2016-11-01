@@ -22,6 +22,9 @@ class Tgl extends Model {
     public function dates() {
     	return $this->hasMany('App\Jdate');
     }
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
     public function type_name() {
         return Helper::c($this->c);
     }

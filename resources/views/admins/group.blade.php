@@ -18,6 +18,7 @@
 	}
 @endsection	
 @section('content')
+	<h5>{{$group->name}}</h5>
 	<form action="/admin/group/{{$group->id}}/add_student" method="post" class="row">
 		{!!csrf_field()!!}
 		<div class="input-field col s3">
@@ -38,6 +39,7 @@
 		</div>
 		<button class="btn-flat waves-effect waves-light" type="submit">Добавить</button>
 	</form>
+	<h4>Студенты</h4>
 	@forelse($students as $student)
 		<div class="std">
 			<span>{{$student->last}} {{$student->first}} {{$student->mid}}</span>
@@ -46,5 +48,15 @@
 		</div>
 	@empty
 		<span>В группе не найдено студентов</span>
+	@endforelse
+	<h4>Группы</h4>
+	@forelse($tgls as $tgl)
+		<div class="std">
+			<span><a href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}}</a></span>
+			<span><a href="/admin/teacher/{{$tgl->user->id}}">{{$tgl->user->_name()}}</a></span>
+			<a href="/admin/delete/lesson/{{$tgl->id}}">Открепить</a>
+		</div>
+	@empty
+		<span>К группе не прикреплено предметов</span>
 	@endforelse
 @endsection
