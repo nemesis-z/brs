@@ -350,7 +350,7 @@ Route::get('/login', 'Auth\AuthController@getLogin');
 Route::post('/login', 'Auth\AuthController@postLogin');
 Route::get('/logout', 'Auth\AuthController@getLogout');
 
-Route::get('/qwehjjkalhfalkjehtulaerkhku', function() {
+/*Route::get('/qwehjjkalhfalkjehtulaerkhku', function() {
 	$marks = App\Mark::all();
 	$x=0;
 	foreach($marks as $mark) {
@@ -358,7 +358,7 @@ Route::get('/qwehjjkalhfalkjehtulaerkhku', function() {
 		$mark->save();
 	}
 	return;
-});
+});*/
 
 Route::group(['middleware' => 'reqs'], function() {
 	Route::post('/mark/{lesson}/{group}/{student}','teachers@setMark');
