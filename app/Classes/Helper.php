@@ -59,8 +59,9 @@ class Helper {
 		return $sem;
 	}
 	public function getMarks($group,$lesson,$tgls,$teacher=false) {
-		$ans = array('students'=>array(),'marks'=>array(),'jjs'=>array(), 'types'=>$this->types(false,true));
+		$ans = array('lec'=>false,'students'=>array(),'marks'=>array(),'jjs'=>array(), 'types'=>$this->types(false,true));
 		$tgls->each(function($tgl) use(&$ans) {
+			if($tgl->c==1)$ans['lec']=true;
 			$tgl->dates->load('marks');
 			$arr = array('c'=>$tgl->c,'info'=>$this->c($tgl->c),'dates'=>$tgl->dates->toArray());
 			$marks = array();

@@ -147,6 +147,7 @@ function removePicker(p) {
 			},1);
 		}).appendTo(el);
 	});
+	@if($lec)
 	$('._mark').click(function() {
 		if(is)return;
 		var that=$(this), avg=that.parent().find('.avg'), o=that.offset(), val=+that.text()||0;
@@ -171,6 +172,7 @@ function removePicker(p) {
 			_that.remove();
 		});
 	});
+	@endif
 	$('._absent').click(_absent);
 }();
 @endsection
