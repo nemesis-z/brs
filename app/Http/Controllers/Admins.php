@@ -145,7 +145,7 @@ class admins extends Controller {
 	//pages
 	public function lesson(App\Lesson $lesson) {
 		$adds = Helper::adds();
-		$teachers = App\Tgl::join('groups','groups.id','=','tgls.group_id')->join('users','users.id','=','tgls.user_id')->whereRaw("`tgls`.`sem` = ({$adds[0]}-`groups`.`year`)*2+{$adds[1]}")->select('users.*')->where('tgls.lesson_id',$lesson->id)->groupBy('users.id')->orderBy('users.last')->get();
+		$teachers = App\Tgl::join('groups','groups.id','=','tgls.group_id')->join('users','users.id','=','tgls.user_id')->whereRaw("`tgls`.`sem` = ({$adds[0]}-`groups`.`year`)*2+{$adds[1]}")->select('users.*')->where('tgls.lesson_id',$lesson->id)->where('groups.fac',$this->user->admin)->groupBy('users.id')->orderBy('users.last')->get();
 		return view('admins.lesson',['lesson'=>$lesson,'teachers'=>$teachers]);
 	}
 	public function group(App\Group $group) {
@@ -155,7 +155,7 @@ class admins extends Controller {
 			Auth::logout();
 			return redirect('/');
 		}
-		return view('admins.group', ['tgls'=>$group->tgls->load('lesson')->load('user'),'group'=>$group,'students'=>$group->students->load('limited')]);
+		return view('admins.group', ['tgls'=>$group->tgls->load('lesson')->sortBy('lesson.name')->load('user'),'group'=>$group,'students'=>$group->students->load('limited')]);
 	}
 	public function teacher(App\User $teacher) {
 		$add = array();
@@ -163,8 +163,10 @@ class admins extends Controller {
 		$add['groups'] = App\Group::where('fac',$this->user->admin)->orderBy('name')->get();
 		$add['types'] = Helper::type();
 		$add['cs'] = Helper::c();
-		$tgls = $teacher->tgls->load('group')->load('lesson')->sortBy('lesson.name');
-		return view('admins.teacher', ['add'=>$add,'teacher'=>$teacher,'tgls'=>$tgls]);
+		$tgls = $teacher->tgls->load(['group'=>function($q) {
+			$q->where('fac',$this->user->admin);
+		}])->load('lesson')->sortBy('lesson.name');
+		return view('admins.teacher', ['add'=>$add,'teacher'=>$teacher,'tgls'=>$tgls->filter(function($t){return $t->group!=null;})]);
 	}
 
 	public function main() {
@@ -172,7 +174,7 @@ class admins extends Controller {
 		$fac = $fac<0?0:$fac;
 		$adds = Helper::adds();
 		$lessons = App\Tgl::join('lessons', 'lessons.id', '=', 'tgls.lesson_id')->join('groups', 'groups.id', '=', 'tgls.group_id')->whereRaw("`tgls`.`sem` = ({$adds[0]}-`groups`.`year`)*2+{$adds[1]}")->select('lessons.*')->groupBy('lessons.id')->orderBy('lessons.name')->get();
-		return view('admins.main', ['teachers'=>App\User::where('admin',0)->orderBy('last')->get(), 'lessons'=>$lessons, 'groups'=>App\Group::where('fac',!$fac?'>=':'=',$fac)->orderBy('year','desc')->orderBy('name')->get()]);
+		return view('admins.main', ['teachers'=>App\User::where('admin',0)->orderBy('last')->get(), 'lessons'=>$lessons, 'groups'=>App\Group::where('fac',!$fac?'>=':'=',$fac)->orderBy('name')->orderBy('year','desc')->get()]);
 	}
 
 	//cast

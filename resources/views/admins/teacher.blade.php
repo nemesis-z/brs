@@ -44,9 +44,9 @@
 		<a target="_blank" href="/admin/teacher/{{session('teacher')}}">Этот предмет уже добавлен</a>
 	@endif
 	@forelse($tgls as $tgl)
-		<div style="margin:20px;">
-			<a href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}}</a>
-			(<a href="/admin/group/{{$tgl->group->id}}">{{$tgl->group->name}}</a>, {{$tgl->type_name()}})
+		<div сlass="row">
+			<a href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}}</a> ->
+			(<a href="/admin/group/{{$tgl->group->id}}">{{$tgl->group->name}}</a>, {{$tgl->type_name()}}) ->
 			<a href="/admin/delete/lesson/{{$tgl->id}}">Открепить</a>
 		</div>
 	@empty

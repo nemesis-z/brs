@@ -49,11 +49,11 @@
 	@empty
 		<span>В группе не найдено студентов</span>
 	@endforelse
-	<h4>Группы</h4>
+	<h4>Предметы</h4>
 	@forelse($tgls as $tgl)
 		<div class="std">
-			<span><a href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}}</a></span>
-			<span><a href="/admin/teacher/{{$tgl->user->id}}">{{$tgl->user->_name()}}</a></span>
+			<a href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}} ({{$tgl->type_name()}})</a>->
+			<a href="/admin/teacher/{{$tgl->user->id}}">{{$tgl->user->_name()}}</a>->
 			<a href="/admin/delete/lesson/{{$tgl->id}}">Открепить</a>
 		</div>
 	@empty

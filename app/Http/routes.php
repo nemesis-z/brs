@@ -34,6 +34,94 @@ function sp($t) {
 
 
 Route::get('/', function () {
+	/*Excel::batch('b', function($reader, $file) {
+		// return;
+		$reader->noHeading();
+		$x = -1;
+		$g = null;
+		
+		$reader->each(function($row) use(&$x, &$g, $file,&$name) {
+			if($x!=999)++$x;
+			if($x!=4&&$x<11)return;
+			if($x==11&&$row[2]!=1)dump('err: '.$file);
+			if(!$row[2]) {
+				$x=999;
+				return;
+			}
+			if($x==999)return dump('999');
+			if($x==4) {
+				$name = explode(": ", $row[2]);
+				$name = trim($name[1],'.');
+				$g = App\Group::where('name',$name)->first();
+				// dump($g->toArray());
+				if(!$g) {
+					dump('group: '.$name);
+					return false;
+				}
+				return;
+			}
+			$lesson = App\Lesson::firstOrCreate(array('name'=>trim($row[3])));
+			// ->save()
+			$arr = array($row[6],$row[8],$row[10]);
+			$type = -1;
+			$tmp = array(16,18,17,20,22,19);
+			for($i=0;$i<count($tmp);$i++)if($row[$tmp[$i]]) {
+				$type=$i+1;
+				break;
+			}
+			if($type==-1)return;// dump($row->toArray());
+			if(!$g)return;
+			for($i=0;$i<3;$i++) {
+				$name = $arr[$i];
+				if(!$name)continue;
+				$flm = explode(" ", $name);
+				if(count($flm)<3) {
+					// dump('name: '.$name);
+					dump($flm);
+					continue;
+				}
+				$last = $flm[0];
+				$fm = explode('.', $flm[1]);
+				$login=strtolower(sp(mb_convert_encoding($last.$fm[0].$fm[1], 'utf-8')));
+				$user = App\User::where('name',$login)->first();
+				if(!$user) {
+					dump('!user');
+					continue;
+					$pass = rp();
+					$user = new App\User(array(
+						'name'=>$login,
+						'password'=>bcrypt($pass),
+						'first'=>$fm[0],
+						'last'=>$last,
+						'mid'=>$fm[1],
+						'_pass'=>$pass
+					));
+					// $user->save();
+					// dump('t: '.$user->id);
+				}
+				$tgl = App\Tgl::where(array('user_id'=>$user->id,
+					'group_id'=>$g->id,
+					'lesson_id'=>$lesson->id,
+					'type'=>$type,
+					'c'=>$i+1,
+					'sem'=>\App\Facades\Helper::sem($g->year)
+				))->first();
+				if($tgl)continue;
+				$tgl = new App\Tgl(array(
+					'user_id'=>$user->id,
+					'group_id'=>$g->id,
+					'lesson_id'=>$lesson->id,
+					'type'=>$type,
+					'c'=>$i+1,
+					'num'=>$row[2],
+					'sem'=>\App\Facades\Helper::sem($g->year)
+				));
+				// $tgl->save();
+				// dump('tgl: '.$tgl->id);
+			}
+		});
+	});
+	return;
 	/*Excel::load('asd.xls', function($reader) {
 		$reader->noHeading();
 		$reader->each(function($sheet) {
@@ -100,83 +188,7 @@ Route::get('/', function () {
 		});
 	});
 	return;
-	/*Excel::batch('b', function($reader, $file) {
-		// return;
-		$reader->noHeading();
-		$x = -1;
-		$g = null;
-		
-		$reader->each(function($row) use(&$x, &$g, $file,&$name) {
-			if($x!=999)++$x;
-			if($x!=4&&$x<11)return;
-			if($x==11&&$row[2]!=1)dump('err: '.$file);
-			if(!$row[2]) {
-				$x=999;
-				return;
-			}
-			if($x==999)return dump('999');
-			if($x==4) {
-				$name = explode(": ", $row[2]);
-				$name = trim($name[1],'.');
-				$g = App\Group::where('name',$name)->first();
-				dump($g->toArray());
-				if(!$g) {
-					dump('group: '.$name);
-					return false;
-				}
-				return;
-			}
-			$lesson = App\Lesson::firstOrCreate(array('name'=>trim($row[3])));
-			$arr = array($row[6],$row[8],$row[10]);
-			$type = -1;
-			$tmp = array(16,18,17,20,22,19);
-			for($i=0;$i<count($tmp);$i++)if($row[$tmp[$i]]) {
-				$type=$i+1;
-				break;
-			}
-			if($type==-1)return;// dump($row->toArray());
-			if(!$g)return;
-			for($i=0;$i<3;$i++) {
-				$name = $arr[$i];
-				if(!$name)continue;
-				$flm = explode(" ", $name);
-				if(count($flm)<3) {
-					// dump('name: '.$name);
-					dump($flm);
-					continue;
-				}
-				$last = $flm[0];
-				$fm = explode('.', $flm[1]);
-				$login=strtolower(sp(mb_convert_encoding($last.$fm[0].$fm[1], 'utf-8')));
-				$user = App\User::where('name',$login)->first();
-				if(!$user) {
-					$pass = rp();
-					$user = new App\User(array(
-						'name'=>$login,
-						'password'=>bcrypt($pass),
-						'first'=>$fm[0],
-						'last'=>$last,
-						'mid'=>$fm[1],
-						'_pass'=>$pass
-					));
-					// $user->save();
-					// dump('t: '.$user->id);
-				}
-				$tgl = new App\Tgl(array(
-					'user_id'=>$user->id,
-					'group_id'=>$g->id,
-					'lesson_id'=>$lesson->id,
-					'type'=>$type,
-					'c'=>$i+1,
-					'num'=>$row[2],
-					'sem'=>\App\Facades\Helper::sem($g->year)
-				));
-				// $tgl->save();
-				// dump('tgl: '.$tgl->id);
-			}
-		});
-	});
-	return;
+	
 	Excel::load('a.xlsx', function($reader) {
 		// фэу
 		$reader->noHeading();
