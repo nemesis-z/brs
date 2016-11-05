@@ -52,7 +52,7 @@ class teachers extends Controller {
 		$d = explode('-', date('Y-n'));
 		if($student->limited)return $this->err('Студент не допущен');
 		if($d[1]<8 && $request->type<'d')return $this->err('Поздно вносить правки за 1-ый семестр :(');
-		$max = Helper::max();
+		$max = Helper::max($lesson->id);
 		if($request->mark > $max[$request->type])return $this->err('Данная оценка не может быть больше '.$max[$request->type]);
 		if($student->group_id!=$group->id)return $this->logout('m:st_grp!=grp');
 		$sem = Helper::sem($group->year);

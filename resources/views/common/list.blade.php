@@ -27,13 +27,13 @@
 		</tr>
 		<tr>
 			<!-- <td style="height:50px;"></td> -->
-			<td>Баллы (0-15)</td>
-			<td>Баллы (0-20)</td>
+			<td>Баллы (0-{{$maxs['t1']}})</td>
+			<td>Баллы (0-{{$maxs['r1']}})</td>
 			<!-- <td></td> -->
-			<td>Баллы (0-15)</td>
-			<td>Баллы (0-15)</td>
-			<td>Баллы (0-20)</td>
-			<td>Баллы (0-15)</td>
+			<td>Баллы (0-{{$maxs['p']}})</td>
+			<td>Баллы (0-{{$maxs['t2']}})</td>
+			<td>Баллы (0-{{$maxs['r2']}})</td>
+			<td>Баллы (0-{{$maxs['s2']}})</td>
 		</tr>
 		<tr>
 			<td>№</td>
@@ -56,7 +56,7 @@
 			<tr data-x="{{$s['id']}}">
 				<td>{{++$i}}</td>
 				<td style="text-align: left;">{{$s['name']}}</td>
-				@foreach($types as $let)
+				@foreach($maxs as $let=>$val)
 					<td class="{{$let=='avg'?$let:'_mark'}}" data-x="{{$let}}">{{isset($d[$let])?$d[$let]['mark']:0}}</td>
 				@endforeach
 			</tr>

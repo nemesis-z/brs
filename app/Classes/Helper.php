@@ -25,11 +25,12 @@ class Helper {
 		}
 		return !$regex?$ret:'/^('.(implode('|',$ret)).')$/';
 	}
-	public function max() {
+	public function max($g=0) {
 		$i=0;
-		$max = array(15,20,15,15,20,15,20,20);
+		$max = array(15,20,15,15,20,15,20,0,20);
+		if($g==36)$max = array(15,25,15,15,15,15,20,0,20);
 		$ret = array();
-		foreach($this->types() as $val)$ret[$val] = $max[$i++];
+		foreach($this->types(false,true) as $val)$ret[$val] = $max[$i++];
 		return $ret;
 	}
 	public function closed() {
@@ -59,7 +60,7 @@ class Helper {
 		return $sem;
 	}
 	public function getMarks($group,$lesson,$tgls,$teacher=false) {
-		$ans = array('lec'=>false,'students'=>array(),'marks'=>array(),'jjs'=>array(), 'types'=>$this->types(false,true));
+		$ans = array('lec'=>false,'students'=>array(),'marks'=>array(),'jjs'=>array(), 'maxs'=>$this->max($lesson->id), 'types'=>$this->types(false,true));
 		$tgls->each(function($tgl) use(&$ans) {
 			if($tgl->c==1)$ans['lec']=true;
 			$tgl->dates->load('marks');
