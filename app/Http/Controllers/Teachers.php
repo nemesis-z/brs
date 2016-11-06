@@ -40,9 +40,11 @@ class teachers extends Controller {
 		return view('teachers.groups',array('lid'=>$lesson->id,'groups'=>$this->user->tgls->where('lesson_id',$lesson->id)->load('group')->map(function($tgl){return $tgl->group;})->unique('id')->sortBy('name')));
 	}
 	public function getList(App\Lesson $lesson,App\Group $group) {
-		$tgls = $this->user->tgls->where('group_id',$group->id)->where('lesson_id',$lesson->id);
+		// $tgls = $this->user->tgls->where('group_id',$group->id)->where('lesson_id',$lesson->id);
+		$adds = Helper::adds();
+		$tgls = App\Tgl::where('tgls.group_id',$group->id)->where('tgls.lesson_id',$lesson->id)->join('groups','groups.id','=','tgls.group_id')->whereRaw("`tgls`.`sem` = ({$adds[0]}-`groups`.`year`)*2+{$adds[1]}")->select('tgls.*')->orderBy('tgls.c');
 		if(!$tgls)abort(404);
-		return view('teachers.list', array_merge(Helper::getMarks($group,$lesson,$tgls),array('lesson'=>$lesson,'group'=>$group)));
+		return view('teachers.list', array_merge(Helper::getMarks($group,$lesson,$tgls,$this->user),array('lesson'=>$lesson,'group'=>$group)));
 	}
 
 
