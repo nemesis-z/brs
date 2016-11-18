@@ -307,6 +307,16 @@ Route::get('/', function () {
 		});
 	});
 	return;*/
+	/*Excel::create('New file', function($excel) {
+
+	    $excel->sheet('New sheet', function($sheet) {
+
+	        $sheet->loadView('xls.sheet');
+
+	    });
+
+	})->export();
+	return;*/
 	if(Auth::guest())return redirect('/login');
 	else return redirect('/teacher');
 });
