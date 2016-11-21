@@ -12,6 +12,7 @@
 */
 
 use App\User;
+use App\Facades\Helper;
 use Illuminate\Support\Facades\Auth;
 
 function rp() { 
@@ -309,54 +310,6 @@ Route::get('/', function () {
 	return;*/
 	if(Auth::guest())return redirect('/login');
 	else return redirect('/teacher');
-	Excel::create('New file', function($excel) {
-		$group = App\Group::find(279);
-		$lesson = App\Lesson::find(13);
-	    $excel->sheet('New sheet', function($sheet) {
-	    	$sheet->setWidth(array(
-			    'A'=>5,
-			    'B'=>30,
-			    'D'=>18,
-			    'E'=>18,
-			    'F'=>18,
-			    'G'=>18,
-			    'H'=>18,
-			    'I'=>18,
-			    'J'=>12,
-			    'K'=>12,
-			    'L'=>12,
-			));
-			$sheet->setHeight(array(
-				10=>55
-			));
-			$sheet->cells('A1:L7', function($cells) {
-				$cells->setAlignment('center');
-			});
-			$sheet->cells('C8:L37', function($cells) {
-				$cells->setAlignment('center');
-			});
-			$sheet->cell('B11', function($cell) {
-				$cell->setAlignment('center');
-			});
-			$sheet->cells('A11:A37', function($cells) {
-				$cells->setAlignment('center');
-			});
-			$sheet->cells('J1:J3', function($cells) {
-				$cells->setAlignment('right');
-			});
-			$sheet->cells('J8:L8', function($cells) {
-				$cells->setValignment('center');
-			});
-			$sheet->cells('C9:I10', function($cells) {
-				$cells->setValignment('center');
-			});
-			$sheet->mergeCells('A8:A10')->mergeCells('B8:B10')->mergeCells('C8:D8')->mergeCells('E8:H8')->mergeCells('I8:I10')->mergeCells('J8:J10')->mergeCells('K8:K10')->mergeCells('I1:K1')->mergeCells('I2:K2')->mergeCells('I3:K3')->mergeCells('A4:K4')->mergeCells('A5:K5')->mergeCells('A6:K6')->mergeCells('A7:K7');
-	        $sheet->loadView('xls.sheet');
-
-	    });
-
-	})->export();
-	return;
 });
 
 Route::get('/login', 'Auth\AuthController@getLogin');
@@ -384,6 +337,7 @@ Route::group(['prefix' => 'teacher', 'middleware' => 'auth'], function() {
 	Route::get('/', 'teachers@getLessons');
 	Route::get('/lesson/{lesson}', 'teachers@getGroups');
 	Route::get('/lesson/{lesson}/group/{group}','teachers@getList');
+	Route::get('/get/list/{group}/{lesson}','teachers@exportList');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function() {

@@ -7,6 +7,7 @@ use App\Facades\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class teachers extends Controller {
 
@@ -112,6 +113,59 @@ class teachers extends Controller {
 		if($this->user->id!=$date->tgl->user_id)return $this->logout('djd_!id');
 		$date->delete();
 		return response()->json(array('ok'=>1));
+	}
+
+	public function exportList(App\Group $group, App\Lesson $lesson) {
+		$ds = explode(' ', $lesson->name);
+		$name = '';
+		if(count($ds)>1)for($i=0;$i<count($ds);$i++)$name.=substr($ds[$i], 0, 1);
+		else $name = $ds[0];
+		$name.=', '.$group->name.', '.Helper::sem($group->year).' семестр';
+		Excel::create($name, function($excel) use(&$group,&$lesson) {
+		    $excel->sheet('New sheet', function($sheet) use(&$group,&$lesson) {
+		    	$sheet->setWidth(array(
+				    'A'=>5,
+				    'B'=>30,
+				    'C'=>18,
+				    'D'=>18,
+				    'E'=>18,
+				    'F'=>18,
+				    'G'=>18,
+				    'H'=>18,
+				    'I'=>18,
+				    'J'=>12,
+				    'K'=>12,
+				    'L'=>12,
+				));
+				$sheet->setHeight(array(
+					10=>55
+				));
+				$sheet->setFontFamily('Times new roman');
+				$sheet->cells('A1:L80', function($cells) {
+					$cells->setFontSize(16);
+				});
+				$tgls = $group->tgls->where('lesson_id',$lesson->id);
+				$min=999;
+				$tgl = null;
+				$tgls->each(function($_tgl) use(&$min,&$tgl) {
+					if($_tgl->c>=$min)return;
+					$tgl = $_tgl;
+					$min = $tgl->c;
+					if($min==1)return false;
+				});
+				// $helper = new PHPExcel_Helper_HTML;
+				// $richText = $helper->toRichTextObject('qwe<br>asd');
+				// dump($richText);
+				$marks = \App\Facades\Helper::onlyMarks($group,$lesson);
+				$sem = \App\Facades\Helper::sem($group->year);
+				$ms = array('','января','февраля','марта','апреля','июня','июля','августа','сентября','октября','ноября','декабря');
+				$names = array('акультета Автоматизации и прикладной информатики','Нефтетехнологического факультета','Геолого-промыслового факультета','','Нефтемеханического факультета','факультета Экономики и управления','Строительного факультета');
+				$data = array_merge($marks,array('name'=>$this->user->last.' '.$this->user->first.' '.$this->user->mid,'date'=>'«'.date('d').'» '.$ms[date('n')].' '.date('Y').'г.','sem'=>$sem,'zz'=>$names[$group->fac],'group'=>$group,'lesson'=>$lesson,'v'=>Helper::type($tgl->type,!0)));
+		        $sheet->loadView('xls.sheet',$data);
+		        $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
+		    });
+
+		})->export();
 	}
 }
 

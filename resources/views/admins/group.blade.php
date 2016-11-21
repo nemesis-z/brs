@@ -51,10 +51,11 @@
 	@endforelse
 	<h4>Предметы</h4>
 	@forelse($tgls as $tgl)
-		<div class="std">
-			<a href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}} ({{$tgl->type_name()}})</a>->
-			<a href="/admin/teacher/{{$tgl->user->id}}">{{$tgl->user->_name()}}</a>->
-			<a href="/admin/delete/lesson/{{$tgl->id}}">Открепить</a>
+		<div class="row" style="border-bottom:1px solid #eee;padding-bottom:10px;margin-bottom:10px;">
+			<a class="col s5" href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}} ({{$tgl->type_name()}})</a>
+			<a class="col s2" href="/admin/teacher/{{$tgl->user->id}}">{{$tgl->user->_name()}}</a>
+			<a class="col s2" href="/admin/delete/lesson/{{$tgl->id}}" style="text-align: center;">Открепить</a>
+			<a class="col s3" href="/teacher/get/list/{{$group->id}}/{{$tgl->lesson->id}}" style="text-align: right;">Получить ведомость</a>
 		</div>
 	@empty
 		<span>К группе не прикреплено предметов</span>

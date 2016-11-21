@@ -36,8 +36,9 @@ class Helper {
 	public function closed() {
 		return $this->closed;
 	}
-	public function type($id=null) {
-		$types = array('экзамен','зачет','дифзачет','курсовая работа','факультатив','курсовой проект');
+	public function type($id=null,$z=false) {
+		if(!$z)$types = array('экзамен','зачет','дифзачет','курсовая работа','факультатив','курсовой проект');
+		else $types = array('экзамена','зачета','дифзачета','курсовой работы','факультатива','курсового проекта');
 		if($id===null)return $types;
 		return --$id<count($types)?$types[$id]:'';
 	}
@@ -60,7 +61,7 @@ class Helper {
 		return $sem;
 	}
 	public function onlyMarks(&$group,&$lesson) {
-		$ans = array('students'=>array(),'marks'=>array());
+		$ans = array('students'=>array(),'marks'=>array(),'maxs'=>$this->max($lesson->id));
 		$sem = $this->sem($group->year);
 		$group->students->load(array('marks'=>function($q) use($lesson,$sem) {
 			$q->where(array('lesson_id'=>$lesson->id,'sem'=>$sem))->orderBy('type');
@@ -87,7 +88,7 @@ class Helper {
 		return $ans;
 	}
 	public function getMarks($group,$lesson,$tgls,$teacher=false) {
-		$ans = array('lec'=>true,'jjs'=>array(), 'maxs'=>$this->max($lesson->id), 'types'=>$this->types(false,true));
+		$ans = array('lec'=>true,'jjs'=>array(),'types'=>$this->types(false,true));
 		$tgls->each(function($tgl) use(&$ans,&$teacher) {
 			if($teacher&&$tgl->user_id!=$teacher->id) {
 				// dump($tgl->user_id.' '.$teacher->id);
