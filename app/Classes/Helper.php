@@ -59,26 +59,8 @@ class Helper {
 		if($d[1]>8)$sem++;
 		return $sem;
 	}
-	public function getMarks($group,$lesson,$tgls,$teacher=false) {
-		$ans = array('lec'=>true,'students'=>array(),'marks'=>array(),'jjs'=>array(), 'maxs'=>$this->max($lesson->id), 'types'=>$this->types(false,true));
-		$tgls->each(function($tgl) use(&$ans,&$teacher) {
-			if($teacher&&$tgl->user_id!=$teacher->id) {
-				// dump($tgl->user_id.' '.$teacher->id);
-				if($tgl->c==1)$ans['lec'] = false;
-				return;
-			}
-			if($tgl->c==1)$ans['lec']=true;
-			$tgl->dates->load('marks');
-			$arr = array('c'=>$tgl->c,'info'=>$this->c($tgl->c),'dates'=>$tgl->dates->toArray());
-			$marks = array();
-			$tgl->dates->each(function($date) use(&$marks) {
-				$date->marks->each(function($mark) use(&$marks) {
-					$marks[$mark->student_id.$mark->jdate_id] = $mark->mark;
-				});
-			});
-			$arr['marks'] = $marks;
-			$ans['jjs'][] = $arr;
-		});
+	public function onlyMarks(&$group,&$lesson) {
+		$ans = array('students'=>array(),'marks'=>array());
 		$sem = $this->sem($group->year);
 		$group->students->load(array('marks'=>function($q) use($lesson,$sem) {
 			$q->where(array('lesson_id'=>$lesson->id,'sem'=>$sem))->orderBy('type');
@@ -102,6 +84,29 @@ class Helper {
 			$ans['marks'][] = $marks;
 
 		}
+		return $ans;
+	}
+	public function getMarks($group,$lesson,$tgls,$teacher=false) {
+		$ans = array('lec'=>true,'jjs'=>array(), 'maxs'=>$this->max($lesson->id), 'types'=>$this->types(false,true));
+		$tgls->each(function($tgl) use(&$ans,&$teacher) {
+			if($teacher&&$tgl->user_id!=$teacher->id) {
+				// dump($tgl->user_id.' '.$teacher->id);
+				if($tgl->c==1)$ans['lec'] = false;
+				return;
+			}
+			if($tgl->c==1)$ans['lec']=true;
+			$tgl->dates->load('marks');
+			$arr = array('c'=>$tgl->c,'info'=>$this->c($tgl->c),'dates'=>$tgl->dates->toArray());
+			$marks = array();
+			$tgl->dates->each(function($date) use(&$marks) {
+				$date->marks->each(function($mark) use(&$marks) {
+					$marks[$mark->student_id.$mark->jdate_id] = $mark->mark;
+				});
+			});
+			$arr['marks'] = $marks;
+			$ans['jjs'][] = $arr;
+		});
+		$ans = array_merge($ans,self::onlyMarks($group,$lesson));
 		return $ans;
 	}
 }
