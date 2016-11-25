@@ -133,7 +133,8 @@ class teachers extends Controller {
 		          $cells->setTextRotation(90);
 		        });
 		        $sheet->getStyle('B2:Z2')->getAlignment()->setWrapText(true);
-		        // $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
+		        $letters = explode(' ', strtoupper('a b c d e f g h i j k l m n o p q r s t u v w x y z'));
+		        $sheet->setBorder("A2:".$letters[$data['count']].($data['students']->count()+2), 'thin');
 		        $sheet->loadView('xls.all',$data);
 			});
 		})->export();
