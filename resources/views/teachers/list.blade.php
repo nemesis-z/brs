@@ -8,6 +8,7 @@
 @section('content')
 	<div class="hint">Группа {{$group->name}}, {{$lesson->name}}</div>
 	<div class="hint"><a href="/teacher/get/list/{{$group->id}}/{{$lesson->id}}">Получить excel-версию</a></div>
+	<div style="text-align: center;"><a href="/teacher/get/all/{{$group->id}}">Все баллы группы</a></div>
 	@include('common.list')
 @endsection
 @section('style')

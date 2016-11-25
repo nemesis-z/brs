@@ -39,6 +39,9 @@
 		</div>
 		<button class="btn-flat waves-effect waves-light" type="submit">Добавить</button>
 	</form>
+	<div style="text-align: center;">
+		<a href="/teacher/get/all/{{$group->id}}">Получить все баллы группы</a>
+	</div>
 	<h4>Студенты</h4>
 	@forelse($students as $student)
 		<div class="std">

@@ -115,6 +115,31 @@ class teachers extends Controller {
 		return response()->json(array('ok'=>1));
 	}
 
+	public function exportListAll(App\Group $group) {
+		$name = $group->name;
+		$sem = Helper::sem($group->year);
+		$data = array('group_name'=>$group->name,'sem'=>$sem);
+		$lessons = $group->tgls->unique('lesson_id')->map(function($tgl){return $tgl->lesson;});
+		$data['lessons'] = $lessons;
+		$data['students'] = $group->students->sortBy('last')->load(array('marks'=>function($q) use(&$lessons,$sem){$q->whereIn('lesson_id', $lessons->map(function($l){return $l->id;})->toArray())->where('sem',$sem)->orderBy('type');}))->each(function($student){$student->ms = $student->marks->groupBy('lesson_id')->map(function($x){return $x->sum('mark');});});
+		$data['count'] = $lessons->count();
+		Excel::create($name, function($excel) use(&$data) {
+			$excel->sheet('New sheet', function($sheet) use(&$data) {
+				$sheet->setHeight(array(2=>150));
+				$sheet->setWidth(array('A'=>30));
+				$sheet->cells('B2:Z2', function($cells) {
+		          $cells->setAlignment('center');
+		          $cells->setValignment('center');
+		          $cells->setTextRotation(90);
+		        });
+		        $sheet->getStyle('B2:Z2')->getAlignment()->setWrapText(true);
+		        // $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
+		        $sheet->loadView('xls.all',$data);
+			});
+		})->export();
+		return back();
+	}
+
 	public function exportList(App\Group $group, App\Lesson $lesson) {
 		$ds = explode(' ', $lesson->name);
 		$name = '';

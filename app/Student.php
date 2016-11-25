@@ -11,6 +11,10 @@ class Student extends Model {
     
 	public $timestamps = false;
 	protected $guarded = ['id'];
+
+    public function _name() {
+        return $this->last.' '.mb_substr($this->first,0,1,'utf-8').'. '.mb_substr($this->mid,0,1,'utf-8').'.';
+    }
 	
 	public function marks() {
     	return $this->hasMany('App\Mark');

@@ -34,7 +34,7 @@ function sp($t) {
 }
 
 
-Route::get('/', function () {
+Route::get('/', function () { 
 	/*Excel::batch('b', function($reader, $file) {
 		// return;
 		$reader->noHeading();
@@ -338,6 +338,7 @@ Route::group(['prefix' => 'teacher', 'middleware' => 'auth'], function() {
 	Route::get('/lesson/{lesson}', 'teachers@getGroups');
 	Route::get('/lesson/{lesson}/group/{group}','teachers@getList');
 	Route::get('/get/list/{group}/{lesson}','teachers@exportList');
+	Route::get('/get/all/{group}','teachers@exportListAll');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function() {
