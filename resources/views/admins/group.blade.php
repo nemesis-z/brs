@@ -43,9 +43,10 @@
 		<a href="/teacher/get/all/{{$group->id}}">Получить все баллы группы</a>
 	</div>
 	<h4>Студенты</h4>
+	<?$i=0;?>
 	@forelse($students as $student)
 		<div class="std">
-			<span>{{$student->last}} {{$student->first}} {{$student->mid}}</span>
+			<span>{{++$i}}) {{$student->last}} {{$student->first}} {{$student->mid}}</span>
 			<a href="/admin/toggle/{{$student->id}}">{{$student->limited?'Не допущен':'Допущен'}}</a>
 			<a href="/admin/delete/student/{{$student->id}}">Удалить</a>
 		</div>
