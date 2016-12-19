@@ -102,7 +102,7 @@ class admins extends Controller {
 		$data = $request->all();
 		foreach($data as $key => $value)$data[$key] = trim($value);
 		$sv = 'required|regex:/^[А-Я\-а-я]+$/u';
-		if(Validator::make($data,['first'=>$sv,'last'=>$sv,'mid'=>$sv,'number'=>'required|regex:/^[А-Яа-я0-9]+$/u'])->fails()) {
+		if(Validator::make($data,['first'=>$sv,'last'=>$sv,'mid'=>$sv,'number'=>'regex:/^[А-Яа-я0-9]+$/u'])->fails()) {
 			$this->log('add_student',null,1);
 			return back()->with('msg','Неправильно введены данные');
 		}

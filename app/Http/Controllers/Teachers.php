@@ -184,9 +184,12 @@ class teachers extends Controller {
 				// dump($richText);
 				$marks = \App\Facades\Helper::onlyMarks($group,$lesson);
 				$sem = \App\Facades\Helper::sem($group->year);
-				$ms = array('','января','февраля','марта','апреля','июня','июля','августа','сентября','октября','ноября','декабря');
+				$ms = array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');
 				$names = array('акультета Автоматизации и прикладной информатики','Нефтетехнологического факультета','Геолого-промыслового факультета','','Нефтемеханического факультета','факультета Экономики и управления','Строительного факультета');
-				$data = array_merge($marks,array('name'=>$this->user->last.' '.$this->user->first.' '.$this->user->mid,'date'=>'«'.date('d').'» '.$ms[date('n')].' '.date('Y').'г.','sem'=>$sem,'zz'=>$names[$group->fac],'group'=>$group,'lesson'=>$lesson,'v'=>Helper::type($tgl->type,!0)));
+				$data = array_merge($marks,
+					array('name'=>$this->user->last.' '.$this->user->first.' '.$this->user->mid,
+						'date'=>'«'.date('d').'» '.$ms[date('n')].' '.date('Y').'г.',
+						'sem'=>$sem,'zz'=>$names[$group->fac],'group'=>$group,'lesson'=>$lesson,'v'=>Helper::type($tgl->type,!0)));
 		        $sheet->loadView('xls.sheet',$data);
 		        $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
 		    });
