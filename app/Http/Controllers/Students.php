@@ -29,8 +29,8 @@ class students extends Controller {
 		return view('students.lessons',array('lessons'=>$lessons,'gid'=>$group->id));
 	}
 	public function getList($group,$lesson) {
-		$tgls = App\Tgl::with('dates')->where(array('group_id'=>$group->id,'lesson_id'=>$lesson->id,'sem'=>Helper::sem($group->year)))->orderBy('c')->get();
-		if(!$tgls->count())abort(404);
-		return view('students.list',array_merge(Helper::getMarks($group,$lesson,$tgls),array('lesson_id'=>$lesson->id,'group_id'=>$group->id)));
+		$marks = Helper::getMarks($group,$lesson);
+		if(!$marks)abort(404);
+		return view('students.list',array_merge($marks,array('lesson_id'=>$lesson->id,'group_id'=>$group->id)));
 	}
 }

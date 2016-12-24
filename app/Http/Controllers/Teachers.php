@@ -43,9 +43,10 @@ class teachers extends Controller {
 	public function getList(App\Lesson $lesson,App\Group $group) {
 		// $tgls = $this->user->tgls->where('group_id',$group->id)->where('lesson_id',$lesson->id);
 		$adds = Helper::adds();
-		$tgls = App\Tgl::where('tgls.group_id',$group->id)->where('tgls.lesson_id',$lesson->id)->join('groups','groups.id','=','tgls.group_id')->whereRaw("`tgls`.`sem` = ({$adds[0]}-`groups`.`year`)*2+{$adds[1]}")->select('tgls.*')->orderBy('tgls.c');
-		if(!$tgls)abort(404);
-		return view('teachers.list', array_merge(Helper::getMarks($group,$lesson,$tgls,$this->user),array('lesson'=>$lesson,'group'=>$group)));
+		//$tgls = App\Tgl::where('tgls.group_id',$group->id)->where('tgls.lesson_id',$lesson->id)->join('groups','groups.id','=','tgls.group_id')->whereRaw("`tgls`.`sem` = ({$adds[0]}-`groups`.`year`)*2+{$adds[1]}")->select('tgls.*')->orderBy('tgls.c');
+		$marks = Helper::getMarks($group,$lesson,$this->user);
+		if(!$marks)abort(404);
+		return view('teachers.list', array_merge($marks,array('lesson'=>$lesson,'group'=>$group)));
 	}
 
 
@@ -182,7 +183,7 @@ class teachers extends Controller {
 				// $helper = new PHPExcel_Helper_HTML;
 				// $richText = $helper->toRichTextObject('qwe<br>asd');
 				// dump($richText);
-				$marks = \App\Facades\Helper::onlyMarks($group,$lesson);
+				$marks = \App\Facades\Helper::getMarks($group,$lesson);
 				$sem = \App\Facades\Helper::sem($group->year);
 				$ms = array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');
 				$names = array('акультета Автоматизации и прикладной информатики','Нефтетехнологического факультета','Геолого-промыслового факультета','','Нефтемеханического факультета','факультета Экономики и управления','Строительного факультета');

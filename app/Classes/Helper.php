@@ -25,13 +25,13 @@ class Helper {
 		}
 		return !$regex?$ret:'/^('.(implode('|',$ret)).')$/';
 	}
-	public function max($g=0) {
+	public function max($g=0,$type=false) {
 		$i=0;
 		$max = array(15,20,15,15,20,15,20,0,20);
-		if($g==36)$max = array(15,25,15,15,15,15,20,0,20);
+		if(in_array($g, array(36,94,561,66,317,308,1116,28,1166,361,146,507,354,512,1148)))$max = array(15,25,10,10,25,15,20,0,20);
 		$ret = array();
 		foreach($this->types(false,true) as $val)$ret[$val] = $max[$i++];
-		return $ret;
+		return $type&&isset($ret[$type])?$ret[$type]:$ret;
 	}
 	public function closed() {
 		return $this->closed;
@@ -60,13 +60,14 @@ class Helper {
 		if($d[1]>8)$sem++;
 		return $sem;
 	}
-	public function onlyMarks(&$group,&$lesson) {
+	private function onlyMarks(&$group,&$lesson,&$tsa) {
 		$ans = array('students'=>array(),'marks'=>array(),'maxs'=>$this->max($lesson->id));
 		$sem = $this->sem($group->year);
 		$group->students->load(array('marks'=>function($q) use($lesson,$sem) {
 			$q->where(array('lesson_id'=>$lesson->id,'sem'=>$sem))->orderBy('type');
 		}));
 		foreach($group->students as $student) {
+			$max = self::max($group->id,'p');
 			for($i=0;$i<2;$i++) {
 				$ndx = !$i?'first':'mid';
 				if(strpos($student[$ndx], '-')!==false) {
@@ -78,36 +79,54 @@ class Helper {
 			$ans['students'][] = $student->toArray();
 			$_marks = $student->marks;//App\Mark::where(['student_id'=>$student->id,'lesson_id'=>$lesson->id,'sem'=>$sem])->orderBy('type')->get();
 			$marks = array('avg'=>array('mark'=>0));
-			$_marks->each(function($mark) use(&$marks) {
+			$skip = false;
+			$_marks->each(function($mark) use(&$marks,&$skip) {
+				if($mark->type=='p')$skip = true;
 				$marks[$mark->type]=$mark;
 				$marks['avg']['mark']+=$mark->mark;
 			});
+			if(!$skip) {
+				$marks['p'] = array();
+				$marks['p']['mark'] = isset($tsa['j'.$student->id])?$tsa['j'.$student->id]:$max;
+				$marks['avg']['mark'] += $marks['p']['mark'];
+			}
 			$ans['marks'][] = $marks;
 
 		}
 		return $ans;
 	}
-	public function getMarks($group,$lesson,$tgls,$teacher=false) {
+	public function getMarks($group,$lesson,$teacher=false) {
+		$tgls = App\Tgl::with('dates')->where(array('group_id'=>$group->id,'lesson_id'=>$lesson->id,'sem'=>Helper::sem($group->year)))->orderBy('c')->get();
+		if(!$tgls->count())return false;
 		$ans = array('lec'=>true,'jjs'=>array(),'types'=>$this->types(false,true));
-		$tgls->each(function($tgl) use(&$ans,&$teacher) {
-			if($teacher&&$tgl->user_id!=$teacher->id) {
-				// dump($tgl->user_id.' '.$teacher->id);
-				if($tgl->c==1)$ans['lec'] = false;
-				return;
-			}
-			if($tgl->c==1)$ans['lec']=true;
+		$tsa = array();
+		$avg = 0;
+		$tgls->each(function($tgl) use(&$ans,&$teacher,&$tsa,&$avg) {
+			if($teacher&&$tgl->c==1&&$tgl->user_id!=$teacher->id)$ans['lec']=false;
 			$tgl->dates->load('marks');
 			$arr = array('c'=>$tgl->c,'info'=>$this->c($tgl->c),'dates'=>$tgl->dates->toArray());
 			$marks = array();
-			$tgl->dates->each(function($date) use(&$marks) {
-				$date->marks->each(function($mark) use(&$marks) {
+			$tgl->dates->each(function($date) use(&$marks,&$tsa) {
+				$date->marks->each(function($mark) use(&$marks,&$tsa) {
 					$marks[$mark->student_id.$mark->jdate_id] = $mark->mark;
+					if(!isset($tsa['j'.$mark->student_id]))$tsa['j'.$mark->student_id]=1;
+					else $tsa['j'.$mark->student_id]++;
 				});
 			});
+			$avg += $tgl->dates->count();
 			$arr['marks'] = $marks;
-			$ans['jjs'][] = $arr;
+			if(!$teacher||$tgl->user_id==$teacher->id)$ans['jjs'][] = $arr;
 		});
-		$ans = array_merge($ans,self::onlyMarks($group,$lesson));
+		$max = self::max($group->id,'p');
+		foreach ($tsa as $key => $v) {
+			$v = $avg - $v;
+			if($v<1) {
+				$tsa[$key] = 0;
+				continue;
+			}
+			$tsa[$key] = ceil($avg/$v)*$max;
+		}
+		$ans = array_merge($ans,self::onlyMarks($group,$lesson,$tsa));
 		return $ans;
 	}
 }
