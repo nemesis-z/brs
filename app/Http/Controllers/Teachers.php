@@ -117,12 +117,24 @@ class teachers extends Controller {
 	}
 
 	public function exportListAll(App\Group $group) {
+		return back();
 		$name = $group->name;
 		$sem = Helper::sem($group->year);
 		$data = array('group_name'=>$group->name,'sem'=>$sem);
 		$lessons = $group->tgls->unique('lesson_id')->map(function($tgl){return $tgl->lesson;});
 		$data['lessons'] = $lessons;
-		$data['students'] = $group->students->sortBy('last')->load(array('marks'=>function($q) use(&$lessons,$sem){$q->whereIn('lesson_id', $lessons->map(function($l){return $l->id;})->toArray())->where('sem',$sem)->orderBy('type');}))->each(function($student){$student->ms = $student->marks->groupBy('lesson_id')->map(function($x){return $x->sum('mark');});});
+		$data['students'] = $group->students->sortBy('last')->load(array('marks'=>
+			function($q) use(&$lessons,$sem) {
+				$q->whereIn('lesson_id', $lessons->map(function($l){return $l->id;})
+				  ->toArray())
+				  ->where('sem',$sem)
+				  ->orderBy('type');
+			})
+		)->each(function($student) {
+			$student->ms = $student->marks->groupBy('lesson_id')->map(function($x){
+				return $x->sum('mark');
+			});
+		});
 		$data['count'] = $lessons->count();
 		Excel::create($name, function($excel) use(&$data) {
 			$excel->sheet('New sheet', function($sheet) use(&$data) {

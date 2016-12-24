@@ -101,8 +101,12 @@ class Helper {
 		$ans = array('lec'=>true,'jjs'=>array(),'types'=>$this->types(false,true));
 		$tsa = array();
 		$avg = 0;
-		$tgls->each(function($tgl) use(&$ans,&$teacher,&$tsa,&$avg) {
-			if($teacher&&$tgl->c==1&&$tgl->user_id!=$teacher->id)$ans['lec']=false;
+		$init = true;
+		$tgls->each(function($tgl) use(&$ans,&$teacher,&$tsa,&$avg,&$init) {
+			if($teacher&&$init) {
+				$init = false;
+				if($tgl->user_id!=$teacher->id)$ans['lec']=false;
+			}
 			$tgl->dates->load('marks');
 			$arr = array('c'=>$tgl->c,'info'=>$this->c($tgl->c),'dates'=>$tgl->dates->toArray());
 			$marks = array();
