@@ -64,8 +64,8 @@
 	</table>
 @endif
 <div id="jrnls">
-<?$i=0;?>
 @foreach($jjs as $jj)
+	<?$i=0;?>
 	<div>
 		@if(Auth::check())
 			<div class="jt23">Чтобы удалить дату - кликните по ней</div>
@@ -79,7 +79,7 @@
 					@foreach($jj['dates'] as $date)
 						<td data-x="{{$date['id']}}" class="tdd">
 							<span class="hoh rotate">{{date("d/m/y",$date['zz'])}}</span>
-							<span class="soh rotate">Удалить</span>
+							@if(Auth::check())<span class="soh rotate">Удалить</span>@endif
 						</td>
 					@endforeach
 				</tr>

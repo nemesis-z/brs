@@ -28,7 +28,7 @@ class Helper {
 	public function max($g=0,$type=false) {
 		$i=0;
 		$max = array(15,20,15,15,20,15,20,0,20);
-		if(in_array($g, array(36,94,561,66,317,308,1116,28,1166,361,146,507,354,512,1148)))$max = array(15,25,10,10,25,15,20,0,20);
+		if(in_array($g, array(36,94,561,66,317,308,1116,28,1166,361,146,507,354,512,1148)))$max = array(10,25,15,10,25,15,20,0,20);
 		$ret = array();
 		foreach($this->types(false,true) as $val)$ret[$val] = $max[$i++];
 		return $type&&isset($ret[$type])?$ret[$type]:$ret;
@@ -128,7 +128,7 @@ class Helper {
 				$tsa[$key] = 0;
 				continue;
 			}
-			$tsa[$key] = ceil($avg/$v)*$max;
+			$tsa[$key] = round($v/$avg*$max);
 		}
 		$ans = array_merge($ans,self::onlyMarks($group,$lesson,$tsa));
 		return $ans;
