@@ -57,7 +57,7 @@
 				<td>{{++$i}}</td>
 				<td style="text-align: left;">{{$s['name']}}</td>
 				@foreach($maxs as $let=>$val)
-					<td class="{{$let=='avg'?$let:'_mark'}}" data-x="{{$let}}">{{isset($d[$let])?$d[$let]['mark']:0}}</td>
+					<td class="{{$let=='avg'?$let:'_mark'}}" {{isset($d[$let]['auto'])?'data-auto="1"':''}} data-x="{{$let}}">{{isset($d[$let])?$d[$let]['mark']:0}}</td>
 				@endforeach
 			</tr>
 		@endforeach

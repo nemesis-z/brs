@@ -88,6 +88,7 @@ class Helper {
 			if(!$skip) {
 				$marks['p'] = array();
 				$marks['p']['mark'] = isset($tsa['j'.$student->id])?$tsa['j'.$student->id]:$max;
+				$marks['p']['auto'] = 1;
 				$marks['avg']['mark'] += $marks['p']['mark'];
 			}
 			$ans['marks'][] = $marks;
