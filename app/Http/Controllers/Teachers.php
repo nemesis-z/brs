@@ -164,7 +164,7 @@ class teachers extends Controller {
 		if(count($ds)>1)for($i=0;$i<count($ds);$i++)$name.=mb_strtoupper(mb_substr($ds[$i], 0, 1));
 		else $name = $ds[0];
 		$name.='_'.$group->name.'_'.Helper::sem($group->year).'_семестр';
-		if(Storage::disk('local')->exists($name.'.xls'))return response()->download(storage_path('app/'.$name.'.xls'));
+		// if(Storage::disk('local')->exists($name.'.xls'))return response()->download(storage_path('app/'.$name.'.xls'));
 		Excel::create($name, function($excel) use(&$group,&$lesson) {
 		    $excel->sheet('New sheet', function($sheet) use(&$group,&$lesson) {
 		    	$sheet->setWidth(array(
@@ -212,9 +212,9 @@ class teachers extends Controller {
 		        $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
 		    });
 
-		})->save('xls',
-			storage_path('app'));
-		return response()->download(storage_path('app/'.$name.'.xls'));
+		})->export('xls');//,
+			// storage_path('app'));
+		// return response()->download(storage_path('app/'.$name.'.xls'));
 	}
 }
 
