@@ -163,7 +163,7 @@ class teachers extends Controller {
 		$name = '';
 		if(count($ds)>1)for($i=0;$i<count($ds);$i++)$name.=mb_strtoupper(mb_substr($ds[$i], 0, 1));
 		else $name = $ds[0];
-		$name.=', '.$group->name.', '.Helper::sem($group->year).' семестр';
+		$name.='_'.$group->name.'_'.Helper::sem($group->year).'_семестр';
 		if(Storage::disk('local')->exists($name.'.xls'))return response()->download(storage_path('app/'.$name.'.xls'));
 		Excel::create($name, function($excel) use(&$group,&$lesson) {
 		    $excel->sheet('New sheet', function($sheet) use(&$group,&$lesson) {
