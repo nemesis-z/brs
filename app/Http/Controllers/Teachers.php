@@ -207,7 +207,7 @@ class teachers extends Controller {
 						'date'=>'«'.date('d').'» '.$ms[date('n')].' '.date('Y').'г.',
 						'sem'=>$sem,'zz'=>$names[$group->fac],'group'=>$group,'lesson'=>$lesson,'v'=>Helper::type($tgl->type,!0)));
 		        // $sheet->loadView('xls.sheet',$data);
-		        // $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
+		        $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
 		    });
 
 		})->export('xls');
