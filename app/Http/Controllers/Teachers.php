@@ -207,8 +207,8 @@ class teachers extends Controller {
 		        $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
 		    });
 
-		})->export();
-		dump(123);
+		})->export('xls');
+		// dump(123);
 	}
 }
 
