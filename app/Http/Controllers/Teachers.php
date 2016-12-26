@@ -155,8 +155,8 @@ class teachers extends Controller {
 	}
 
 	public function exportList(App\Group $group, App\Lesson $lesson) {
-		set_time_limit(60);
-		ini_set('memory_limit', '128m');
+		// set_time_limit(60);
+		// ini_set('memory_limit', '128m');
 
 		$ds = explode(' ', $lesson->name);
 		$name = '';
@@ -198,6 +198,7 @@ class teachers extends Controller {
 				// $helper = new PHPExcel_Helper_HTML;
 				// $richText = $helper->toRichTextObject('qwe<br>asd');
 				// dump($richText);
+				$marks=array();
 				$marks = \App\Facades\Helper::getMarks($group,$lesson);
 				$sem = \App\Facades\Helper::sem($group->year);
 				$ms = array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');

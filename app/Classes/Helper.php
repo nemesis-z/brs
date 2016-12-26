@@ -103,7 +103,7 @@ class Helper {
 		$tsa = array();
 		$avg = 0;
 		$init = true;
-		$tgls->each(function($tgl) use(&$ans,&$teacher,&$tsa,&$avg,&$init) {
+		/*$tgls->each(function($tgl) use(&$ans,&$teacher,&$tsa,&$avg,&$init) {
 			if($teacher&&$init) {
 				$init = false;
 				if($tgl->user_id!=$teacher->id)$ans['lec']=false;
@@ -130,7 +130,7 @@ class Helper {
 				continue;
 			}
 			$tsa[$key] = round($v/$avg*$max);
-		}
+		}*/
 		$ans = array_merge($ans,self::onlyMarks($group,$lesson,$tsa));
 		return $ans;
 	}
