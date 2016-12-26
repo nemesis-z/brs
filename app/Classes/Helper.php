@@ -63,7 +63,7 @@ class Helper {
 	private function onlyMarks(&$group,&$lesson,&$tsa) {
 		$ans = array('students'=>array(),'marks'=>array(),'maxs'=>$this->max($lesson->id));
 		$sem = $this->sem($group->year);
-		$group->students->load(array('marks'=>function($q) use($lesson,$sem) {
+		/*$group->students->load(array('marks'=>function($q) use($lesson,$sem) {
 			$q->where(array('lesson_id'=>$lesson->id,'sem'=>$sem))->orderBy('type');
 		}));
 		foreach($group->students as $student) {
@@ -93,7 +93,7 @@ class Helper {
 			}
 			$ans['marks'][] = $marks;
 
-		}
+		}*/
 		return $ans;
 	}
 	public function getMarks($group,$lesson,$teacher=false) {
