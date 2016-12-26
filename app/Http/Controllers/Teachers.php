@@ -212,7 +212,8 @@ class teachers extends Controller {
 		        $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
 		    });
 
-		})->save('xls',storage_path('app'));
+		})->save('xls',
+			storage_path('app'));
 		return response()->download(storage_path('app/'.$name.'.xls'));
 	}
 }
