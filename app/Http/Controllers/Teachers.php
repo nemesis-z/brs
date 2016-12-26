@@ -156,6 +156,8 @@ class teachers extends Controller {
 
 	public function exportList(App\Group $group, App\Lesson $lesson) {
 		set_time_limit(60);
+		ini_set('memory_limit', '128m');
+
 		$ds = explode(' ', $lesson->name);
 		$name = '';
 		if(count($ds)>1)for($i=0;$i<count($ds);$i++)$name.=mb_strtoupper(mb_substr($ds[$i], 0, 1));
