@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App;
 use Validator;
+use Storage;
 use App\Facades\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -163,6 +164,7 @@ class teachers extends Controller {
 		if(count($ds)>1)for($i=0;$i<count($ds);$i++)$name.=mb_strtoupper(mb_substr($ds[$i], 0, 1));
 		else $name = $ds[0];
 		$name.=', '.$group->name.', '.Helper::sem($group->year).' семестр';
+		if(Storage::disk('local')->exists($name.'.xls'))return response()->download(storage_path('app/'.$name.'.xls'));
 		Excel::create($name, function($excel) use(&$group,&$lesson) {
 		    $excel->sheet('New sheet', function($sheet) use(&$group,&$lesson) {
 		    	$sheet->setWidth(array(
@@ -210,8 +212,8 @@ class teachers extends Controller {
 		        $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
 		    });
 
-		})->export('xls');
-		// dump(123);
+		})->save('xls',storage_path('app'));
+		return response()->download(storage_path('app/'.$name.'.xls'));
 	}
 }
 
