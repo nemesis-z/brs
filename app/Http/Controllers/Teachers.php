@@ -198,7 +198,6 @@ class teachers extends Controller {
 				// $helper = new PHPExcel_Helper_HTML;
 				// $richText = $helper->toRichTextObject('qwe<br>asd');
 				// dump($richText);
-				$marks=array();
 				$marks = \App\Facades\Helper::getMarks($group,$lesson);
 				$sem = \App\Facades\Helper::sem($group->year);
 				$ms = array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');
@@ -207,8 +206,8 @@ class teachers extends Controller {
 					array('name'=>$this->user->last.' '.$this->user->first.' '.$this->user->mid,
 						'date'=>'«'.date('d').'» '.$ms[date('n')].' '.date('Y').'г.',
 						'sem'=>$sem,'zz'=>$names[$group->fac],'group'=>$group,'lesson'=>$lesson,'v'=>Helper::type($tgl->type,!0)));
-		        $sheet->loadView('xls.sheet',$data);
-		        $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
+		        // $sheet->loadView('xls.sheet',$data);
+		        // $sheet->setBorder('A8:K'.(count($data['students'])+12), 'thin');
 		    });
 
 		})->export('xls');
