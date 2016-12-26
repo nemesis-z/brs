@@ -196,7 +196,7 @@ class teachers extends Controller {
 					$tgl = $_tgl;
 					$min = $tgl->c;
 					if($min==1)return false;
-				});
+				}); 
 				// $helper = new PHPExcel_Helper_HTML;
 				// $richText = $helper->toRichTextObject('qwe<br>asd');
 				// dump($richText);
