@@ -208,7 +208,7 @@ class teachers extends Controller {
 		    });
 
 		})->export();
-		// dump(123);
+		dump(123);
 	}
 }
 
