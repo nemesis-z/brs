@@ -96,33 +96,34 @@ class Helper {
 		}
 		return $ans;
 	}
-	public function getMarks($group,$lesson,$teacher=false) {
+	public function getMarks($group,$lesson,$teacher=false,$all=false) {
 		$tgls = App\Tgl::with('dates')->where(array('group_id'=>$group->id,'lesson_id'=>$lesson->id,'sem'=>Helper::sem($group->year)))->orderBy('c')->get();
 		if(!$tgls->count())return false;
 		$ans = array('lec'=>true,'jjs'=>array(),'types'=>$this->types(false,true),'lid'=>$lesson->id);
 		$tsa = array();
 		$avg = 0;
 		$init = true;
-		$tgls->each(function($tgl) use(&$ans,&$teacher,&$tsa,&$avg,&$init) {
-			if($teacher&&$init) {
-				$init = false;
-				if($tgl->user_id!=$teacher->id)$ans['lec']=false;
-			}
-			$tgl->dates->load('marks');
-			$arr = array('c'=>$tgl->c,'info'=>$this->c($tgl->c),'dates'=>$tgl->dates->toArray());
-			$marks = array();
-			$tgl->dates->each(function($date) use(&$marks,&$tsa) {
-				$date->marks->each(function($mark) use(&$marks,&$tsa) {
-					$marks[$mark->student_id.$mark->jdate_id] = $mark->mark;
-					if(!isset($tsa['j'.$mark->student_id]))$tsa['j'.$mark->student_id]=1;
-					else $tsa['j'.$mark->student_id]++;
+		if(!$all) {
+			$tgls->each(function($tgl) use(&$ans,&$teacher,&$tsa,&$avg,&$init) {
+				if($teacher&&$init) {
+					$init = false;
+					if($tgl->user_id!=$teacher->id)$ans['lec']=false;
+				}
+				$tgl->dates->load('marks');
+				$arr = array('c'=>$tgl->c,'info'=>$this->c($tgl->c),'dates'=>$tgl->dates->toArray());
+				$marks = array();
+				$tgl->dates->each(function($date) use(&$marks,&$tsa) {
+					$date->marks->each(function($mark) use(&$marks,&$tsa) {
+						$marks[$mark->student_id.$mark->jdate_id] = $mark->mark;
+						if(!isset($tsa['j'.$mark->student_id]))$tsa['j'.$mark->student_id]=1;
+						else $tsa['j'.$mark->student_id]++;
+					});
 				});
+				$avg += $tgl->dates->count();
+				$arr['marks'] = $marks;
+				if(!$teacher||$tgl->user_id==$teacher->id)$ans['jjs'][] = $arr;
 			});
-			$avg += $tgl->dates->count();
-			$arr['marks'] = $marks;
-			if(!$teacher||$tgl->user_id==$teacher->id)$ans['jjs'][] = $arr;
-		});
-		// dump($tsa);
+		}
 		$max = self::max($group->id,'p');
 		foreach ($tsa as $key => $v) {
 			$v = $avg - $v;

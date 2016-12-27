@@ -118,16 +118,16 @@ class teachers extends Controller {
 	}
 
 	public function exportListAll(App\Group $group) {
+		return back();
 		// DB::connection()->enableQueryLog();
 		$name = $group->name;
 		$sem = Helper::sem($group->year);
 		$data = array('group_name'=>$group->name,'sem'=>$sem);
 		$lessons = $group->tgls->unique('lesson_id')->load('lesson')->map(function($tgl){return $tgl->lesson;});
-		// $marks = $lessons->map(function($lesson)use(&$group){
-		// 	$x = Helper::getMarks($group,$lesson);
-		// 	dump($x);
-		// 	return $x;
-		// });
+		$marks = $lessons->map(function($lesson)use(&$group){
+			$x = Helper::getMarks($group,$lesson);
+			return $x;
+		});
 		// dump($marks);
 		// return dump(DB::getQueryLog());
 		$data['lessons'] = $lessons;
@@ -155,10 +155,10 @@ class teachers extends Controller {
 		// return;
 		// dump($marks);
 		// return;
-		$data['marks'] = array();
-		$lessons->each(function($lesson)use(&$group,&$data){
-			$data['marks'][] = Helper::getMarks($group,$lesson);
-		});
+		// $data['marks'] = array();
+		// $lessons->each(function($lesson)use(&$group,&$data){
+		// 	$data['marks'][] = Helper::getMarks($group,$lesson);
+		// });
 		$data['count'] = $lessons->count();
 		Excel::create($name, function($excel) use(&$data) {
 			$excel->sheet('New sheet', function($sheet) use(&$data) {
@@ -178,6 +178,46 @@ class teachers extends Controller {
 		// return back();
 	}
 
+	public function exportEList(App\Group $group, App\Lesson $lesson) {
+
+		$ds = explode(' ', $lesson->name);
+		$name = '';
+		if(count($ds)>1)for($i=0;$i<count($ds);$i++)$name.=mb_strtoupper(mb_substr($ds[$i], 0, 1));
+		else $name = $ds[0];
+		$name.='_'.$group->name.'_'.Helper::sem($group->year).'_семестр';
+		Excel::create($name, function($excel) use(&$group,&$lesson) {
+		    $excel->sheet('New sheet', function($sheet) use(&$group,&$lesson) {
+		    	$adds = Helper::adds();
+		    	$names = array('','факультета Автоматизации и прикладной информатики','Нефтетехнологического факультета','Геолого-промыслового факультета','','Нефтемеханического факультета','факультета Экономики и управления','Строительного факультета');
+		    	$sem = Helper::sem($group->id);
+		    	$ms = array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');
+		    	$min=999;
+				$tgl = null;
+				$tgls = $group->tgls->where('lesson_id',$lesson->id);
+				$tgls->each(function($_tgl) use(&$min,&$tgl) {
+					if($_tgl->c>=$min)return;
+					$tgl = $_tgl;
+					$min = $tgl->c;
+					if($min==1)return false;
+				}); 
+				$marks = Helper::getMarks($group,$lesson);
+		    	$data = array(
+		    		'date'=>'«'.date('d').'» '.$ms[date('n')].' '.date('Y').'г.',
+		    		'sem'=>$sem,
+		    		'ov'=>($sem%2==0?'весенний':'осенний'),
+		    		'fac'=>str_replace('факультета', '', $names[$group->fac]),
+		    		'crs'=>date('Y')-$group->year+$adds[1],
+		    		'group'=>$group,
+		    		'lesson'=>$lesson,
+		    		'fc'=>Helper::type($tgl->type),
+		    		'marks'=>$marks,
+		    		'type'=>$tgl->type
+		    	);
+				$sheet->loadView('xls.list',$data);
+				$sheet->setBorder('A15:I'.(count($marks['students'])+18), 'thin');
+			});
+		})->export('xls');
+	}
 	public function exportList(App\Group $group, App\Lesson $lesson) {
 		// set_time_limit(60);
 		// ini_set('memory_limit', '128m');
