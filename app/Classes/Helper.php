@@ -72,7 +72,7 @@ class Helper {
 				$ndx = !$i?'first':'mid';
 				if(strpos($student[$ndx], '-')!==false) {
 					$ex = explode('-', $student[$ndx]);
-					$student[$ndx] = mb_substr($ex[0], 0, 1).'.-'.mb_substr($ex[1], 0, 1).'.';
+					$student[$ndx] = mb_substr($ex[0], 0, 1).'-'.mb_substr($ex[1], 0, 1).'.';
 				} else $student[$ndx] = mb_substr($student[$ndx], 0, 1).'.';
 			}
 			$student['name']=$student->last.' '.$student->first.' '.$student->mid;
@@ -122,6 +122,7 @@ class Helper {
 			$arr['marks'] = $marks;
 			if(!$teacher||$tgl->user_id==$teacher->id)$ans['jjs'][] = $arr;
 		});
+		dump($tsa);
 		$max = self::max($group->id,'p');
 		foreach ($tsa as $key => $v) {
 			$v = $avg - $v;

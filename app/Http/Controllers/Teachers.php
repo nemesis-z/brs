@@ -118,16 +118,16 @@ class teachers extends Controller {
 	}
 
 	public function exportListAll(App\Group $group) {
-		DB::connection()->enableQueryLog();
+		// DB::connection()->enableQueryLog();
 		$name = $group->name;
 		$sem = Helper::sem($group->year);
 		$data = array('group_name'=>$group->name,'sem'=>$sem);
 		$lessons = $group->tgls->unique('lesson_id')->load('lesson')->map(function($tgl){return $tgl->lesson;});
-		/*$marks = $lessons->map(function($lesson)use(&$group){
-			$x = Helper::getMarks($group,$lesson);
-			dump($x);
-			return $x;
-		});*/
+		// $marks = $lessons->map(function($lesson)use(&$group){
+		// 	$x = Helper::getMarks($group,$lesson);
+		// 	dump($x);
+		// 	return $x;
+		// });
 		// dump($marks);
 		// return dump(DB::getQueryLog());
 		$data['lessons'] = $lessons;
@@ -143,15 +143,18 @@ class teachers extends Controller {
 				return $x->sum('mark');
 			});
 		});*/
-		// $isids = implode(',', $data['students']->map(function($s){return $s->id;})->toArray());
+		// $sids = implode(',', $data['students']->map(function($s){return $s->id;})->toArray());
 		// $itgls = implode(',', $group->tgls->map(function($t){return $t->id;})->toArray());
 		// $lids = implode(',', $lessons->map(function($t){return $t->id;})->toArray());
 		// return dump($itgls);
-
-		// $marks = DB::select("select s.id, sum(m.mark) from students s join marks m on m.student_id=s.id join jmarks j on j.student_id=s.id where s.id in ({$isids}) and m.lesson_id in ({$lids}) and m.sem={$sem} group by m.lesson_id");
+		// $marks = $lessons->map(function($l) use(&$sids,&$sem) {
+		// 	dump($l->id);
+		// 	$x = DB::select("select s.*, sum(m.mark) from students s left join marks m on m.student_id=s.id and m.lesson_id=30 and m.sem=7 where s.id in ({$sids}) group by s.id");
+		// 	dump($x);
+		// });
+		// return;
 		// dump($marks);
 		// return;
-		$i=0;
 		$data['marks'] = array();
 		$lessons->each(function($lesson)use(&$group,&$data){
 			$data['marks'][] = Helper::getMarks($group,$lesson);
@@ -223,7 +226,7 @@ class teachers extends Controller {
 				$marks = \App\Facades\Helper::getMarks($group,$lesson);
 				$sem = \App\Facades\Helper::sem($group->year);
 				$ms = array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');
-				$names = array('акультета Автоматизации и прикладной информатики','Нефтетехнологического факультета','Геолого-промыслового факультета','','Нефтемеханического факультета','факультета Экономики и управления','Строительного факультета');
+				$names = array('','факультета Автоматизации и прикладной информатики','Нефтетехнологического факультета','Геолого-промыслового факультета','','Нефтемеханического факультета','факультета Экономики и управления','Строительного факультета');
 				$data = array_merge($marks,
 					array('name'=>$this->user->last.' '.$this->user->first.' '.$this->user->mid,
 						'date'=>'«'.date('d').'» '.$ms[date('n')].' '.date('Y').'г.',
