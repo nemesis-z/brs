@@ -52,12 +52,12 @@ class teachers extends Controller {
 
 
 	public function setMark(Request $request,App\Lesson $lesson,App\Group $group,App\Student $student) {
-		// return $this->err('Система временно закрыта');
+		if($this->user->id!=71&&$this->user->id!=35)return $this->err('Система временно закрыта');
 		// \Illuminate\Support\Facades\DB::enableQueryLog();
 		if(Validator::make($request->all(),array('type'=>array('required','regex:'.Helper::types(true)),'mark'=>'required|regex:/^[0-9]+$/'))->fails())return $this->logout('m_regex');
 		$d = explode('-', date('Y-n'));
 		if($student->limited)return $this->err('Студент не допущен');
-		if(!in_array($this->user->id, array(260,71,35)) && $d[1]>10 && ($request->type=='t1'||$request->type=='r1'))return $this->err('Поздно вносить правки за 1-ый семестр :(');
+		if(!in_array($this->user->id, array(71,35)) && $d[1]>10 && ($request->type=='t1'||$request->type=='r1'))return $this->err('Поздно вносить правки за 1-ый семестр :(');
 		$max = Helper::max($lesson->id);
 		if($request->mark > $max[$request->type])return $this->err('Данная оценка не может быть больше '.$max[$request->type]);
 		if($student->group_id!=$group->id)return $this->logout('m:st_grp!=grp');
