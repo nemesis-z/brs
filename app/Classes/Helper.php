@@ -66,7 +66,7 @@ class Helper {
 		$group->students->load(array('marks'=>function($q) use($lesson,$sem) {
 			$q->where(array('lesson_id'=>$lesson->id,'sem'=>$sem))->orderBy('type');
 		}));
-		foreach($group->students as $student) {
+		foreach($group->students->sortBy('last') as $student) {
 			$max = self::max($group->id,'p');
 			for($i=0;$i<2;$i++) {
 				$ndx = !$i?'first':'mid';
@@ -99,7 +99,7 @@ class Helper {
 	public function getMarks($group,$lesson,$teacher=false) {
 		$tgls = App\Tgl::with('dates')->where(array('group_id'=>$group->id,'lesson_id'=>$lesson->id,'sem'=>Helper::sem($group->year)))->orderBy('c')->get();
 		if(!$tgls->count())return false;
-		$ans = array('lec'=>true,'jjs'=>array(),'types'=>$this->types(false,true));
+		$ans = array('lec'=>true,'jjs'=>array(),'types'=>$this->types(false,true),'lid'=>$lesson->id);
 		$tsa = array();
 		$avg = 0;
 		$init = true;

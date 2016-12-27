@@ -8,13 +8,13 @@
 			<td>{{$lesson->name}}</td>
 		@endforeach
 	</tr>
-	@foreach($students as $student))
+	@for($j=0;$j<count($marks[0]["students"]);$j++)
 		<tr style="text-align: center;">
-			<td>{{$student->_name()}}</td>
-			@foreach($lessons as $lesson)
-				<td>{{isset($student->ms[$lesson->id])?$student->ms[$lesson->id]:0}}</td>
-			@endforeach
+			<td>{{$marks[0]["students"][$j]["name"]}}</td>
+			@for($i=0;$i<$lessons->count();$i++)
+				<td>{{$marks[$i]["marks"][$j]["avg"]["mark"]}}</td>
+			@endfor
 		</tr>
-	@endforeach
+	@endfor
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </html>

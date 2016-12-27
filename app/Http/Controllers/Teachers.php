@@ -118,13 +118,20 @@ class teachers extends Controller {
 	}
 
 	public function exportListAll(App\Group $group) {
-		return back();
+		DB::connection()->enableQueryLog();
 		$name = $group->name;
 		$sem = Helper::sem($group->year);
 		$data = array('group_name'=>$group->name,'sem'=>$sem);
-		$lessons = $group->tgls->unique('lesson_id')->map(function($tgl){return $tgl->lesson;});
+		$lessons = $group->tgls->unique('lesson_id')->load('lesson')->map(function($tgl){return $tgl->lesson;});
+		/*$marks = $lessons->map(function($lesson)use(&$group){
+			$x = Helper::getMarks($group,$lesson);
+			dump($x);
+			return $x;
+		});*/
+		// dump($marks);
+		// return dump(DB::getQueryLog());
 		$data['lessons'] = $lessons;
-		$data['students'] = $group->students->sortBy('last')->load(array('marks'=>
+		$data['students'] = $group->students->sortBy('last');/*->load(array('marks'=>
 			function($q) use(&$lessons,$sem) {
 				$q->whereIn('lesson_id', $lessons->map(function($l){return $l->id;})
 				  ->toArray())
@@ -135,6 +142,19 @@ class teachers extends Controller {
 			$student->ms = $student->marks->groupBy('lesson_id')->map(function($x){
 				return $x->sum('mark');
 			});
+		});*/
+		// $isids = implode(',', $data['students']->map(function($s){return $s->id;})->toArray());
+		// $itgls = implode(',', $group->tgls->map(function($t){return $t->id;})->toArray());
+		// $lids = implode(',', $lessons->map(function($t){return $t->id;})->toArray());
+		// return dump($itgls);
+
+		// $marks = DB::select("select s.id, sum(m.mark) from students s join marks m on m.student_id=s.id join jmarks j on j.student_id=s.id where s.id in ({$isids}) and m.lesson_id in ({$lids}) and m.sem={$sem} group by m.lesson_id");
+		// dump($marks);
+		// return;
+		$i=0;
+		$data['marks'] = array();
+		$lessons->each(function($lesson)use(&$group,&$data){
+			$data['marks'][] = Helper::getMarks($group,$lesson);
 		});
 		$data['count'] = $lessons->count();
 		Excel::create($name, function($excel) use(&$data) {
@@ -152,7 +172,7 @@ class teachers extends Controller {
 		        $sheet->loadView('xls.all',$data);
 			});
 		})->export();
-		return back();
+		// return back();
 	}
 
 	public function exportList(App\Group $group, App\Lesson $lesson) {

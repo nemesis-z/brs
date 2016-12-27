@@ -59,7 +59,8 @@
 			<a class="col s5" href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}} ({{$tgl->type_name()}})</a>
 			<a class="col s2" href="/admin/teacher/{{$tgl->user->id}}">{{$tgl->user->_name()}}</a>
 			<a class="col s2" href="/admin/delete/lesson/{{$tgl->id}}" style="text-align: center;">Открепить</a>
-			<a class="col s3" href="/teacher/get/list/{{$group->id}}/{{$tgl->lesson->id}}" style="text-align: right;">Получить ведомость</a>
+			<div class="col s3"><a href="/teacher/get/list/{{$group->id}}/{{$tgl->lesson->id}}" style="text-align: right;">Получить ведомость</a><br>
+			<a href="/teacher/get/all/{{$group->id}}">Все баллы группы</a></div>
 		</div>
 	@empty
 		<span>К группе не прикреплено предметов</span>
