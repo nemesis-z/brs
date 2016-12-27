@@ -103,10 +103,82 @@
 			<td>{{$s["name"]}}</td>
 			<td align="center">{{$s["number"]}}</td>
 			<td align="center">{{$marks["marks"][$i-1]["avg"]["mark"]}}</td>
-			@if($marks["marks"][$i-1]["avg"]["mark"]<10)
+			@if($marks["marks"][$i-1]["avg"]["mark"]<10||$limits->where('student_id',$s["id"])->count())
 				<td colspan="4" align="center" style="font-weight:bold;">НЕДОПУСК</td>
 			@endif
 		</tr>
 	@endforeach
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr style="height:28px;">
+		<td colspan="3" style="wrap-text: true;">Ведомость получил преподаватель _________________</td>
+		<td></td>
+		<td colspan="5">Результаты сдачи зачетов и экзаменов</td>
+	</tr>
+	<tr>
+		<td colspan="4">«___»________________2016г.</td>
+		<td></td>
+		<td colspan="2" style="border-top:1px solid;">Зачтено</td>
+		<td colspan="2" style="border-top:1px solid;border-left:1px solid;">Отлично</td>
+	</tr>
+	<tr>
+		<td colspan="4">Ведомость возвращена</td>
+		<td></td>
+		<td colspan="2" style="border-top:1px solid;">Не зачтено</td>
+		<td colspan="2" style="border-top:1px solid;border-left:1px solid;">Хорошо</td>
+	</tr>
+	<tr>
+		<td colspan="4">«___»________________2016г.</td>
+		<td></td>
+		<td colspan="2" style="border-top:1px solid;">Неявка</td>
+		<td colspan="2" style="border-top:1px solid;border-left:1px solid;">Удовлет.</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td colspan="2" style="border-top:1px solid;"></td>
+		<td colspan="2" style="border-top:1px solid;border-left:1px solid;">Неудовлет.</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td colspan="2" style="border-top:1px solid;"></td>
+		<td colspan="2" style="border-top:1px solid;border-left:1px solid;">Неявка</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td colspan="2" style="border-top:1px solid;border-bottom: 1px solid;"></td>
+		<td colspan="2" style="border-top:1px solid;border-left:1px solid;border-bottom: 1px solid;">Итого</td>
+	</tr>
+	<tr>
+		<td colspan="9" align="center" style="font-weight: bold;">Указания по оформлению ведомости</td>
+	</tr>
+	<tr>
+		<td valign="top" align="right">1)</td>
+		<td colspan="8" style="height:42;wrap-text: true;">Факультет составляет ведомости в двух экземплярах и передает их на кафедру. Не позднее 10 часов утра следующего после отчетности дня, преподаватель сдает один экземпляр ведомости в деканат факультета, второй экземпляр, заверенный методистом факультета остается на кафедре;</td>
+	</tr>
+	<tr>
+		<td valign="top" align="right">2)</td>
+		<td colspan="8" style="height:28;wrap-text: true;">Ведомости сдаются в деканат только преподавателями, которые принимали отчетность. Передача их через других лиц не допускается;</td>
+	</tr>
+	<tr>
+		<td align="right">3)</td>
+		<td colspan="8" style="wrap-text: true;">Преподаватель расписывается против каждой оценки;</td>
+	</tr>
+	<tr>
+		<td valign="top" align="right">4)</td>
+		<td colspan="8" style="height:28;wrap-text: true;">Все записи в ведомости производятся обязательно чернилами. Помарка и подчистка не допускаются. Поправки должны быть оговорены подписью преподавателя.</td>
+	</tr>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </html>

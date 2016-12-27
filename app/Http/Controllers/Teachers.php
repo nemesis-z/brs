@@ -179,7 +179,6 @@ class teachers extends Controller {
 	}
 
 	public function exportEList(App\Group $group, App\Lesson $lesson) {
-
 		$ds = explode(' ', $lesson->name);
 		$name = '';
 		if(count($ds)>1)for($i=0;$i<count($ds);$i++)$name.=mb_strtoupper(mb_substr($ds[$i], 0, 1));
@@ -189,7 +188,8 @@ class teachers extends Controller {
 		    $excel->sheet('New sheet', function($sheet) use(&$group,&$lesson) {
 		    	$adds = Helper::adds();
 		    	$names = array('','факультета Автоматизации и прикладной информатики','Нефтетехнологического факультета','Геолого-промыслового факультета','','Нефтемеханического факультета','факультета Экономики и управления','Строительного факультета');
-		    	$sem = Helper::sem($group->id);
+		    	$sem = Helper::sem($group->year);
+				$limits = App\Limit::where('sem',$sem)->whereIn('student_id',$group->students->map(function($st){return $st->id;}))->get();
 		    	$ms = array('','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря');
 		    	$min=999;
 				$tgl = null;
@@ -211,7 +211,8 @@ class teachers extends Controller {
 		    		'lesson'=>$lesson,
 		    		'fc'=>Helper::type($tgl->type),
 		    		'marks'=>$marks,
-		    		'type'=>$tgl->type
+		    		'type'=>$tgl->type,
+		    		'limits'=>$limits
 		    	);
 				$sheet->loadView('xls.list',$data);
 				$sheet->setBorder('A15:I'.(count($marks['students'])+18), 'thin');
