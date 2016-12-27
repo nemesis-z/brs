@@ -122,7 +122,7 @@ class Helper {
 			$arr['marks'] = $marks;
 			if(!$teacher||$tgl->user_id==$teacher->id)$ans['jjs'][] = $arr;
 		});
-		dump($tsa);
+		// dump($tsa);
 		$max = self::max($group->id,'p');
 		foreach ($tsa as $key => $v) {
 			$v = $avg - $v;
