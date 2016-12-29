@@ -118,16 +118,18 @@ class teachers extends Controller {
 	}
 
 	public function exportListAll(App\Group $group) {
-		return back();
+		// return back();
 		// DB::connection()->enableQueryLog();
 		$name = $group->name;
 		$sem = Helper::sem($group->year);
 		$data = array('group_name'=>$group->name,'sem'=>$sem);
-		$lessons = $group->tgls->unique('lesson_id')->load('lesson')->map(function($tgl){return $tgl->lesson;});
-		$marks = $lessons->map(function($lesson)use(&$group){
-			$x = Helper::getMarks($group,$lesson);
-			return $x;
+		$lessons = array();
+		$group->tgls->unique('lesson_id')->load('lesson')->each(function($tgl)use(&$lessons){
+			$lessons[] = $tgl->lesson;
 		});
+
+		$data['marks'] = array();
+		foreach($lessons as $lesson)$data['marks'][] = Helper::getMarks($group,$lesson);
 		// dump($marks);
 		// return dump(DB::getQueryLog());
 		$data['lessons'] = $lessons;
@@ -159,7 +161,7 @@ class teachers extends Controller {
 		// $lessons->each(function($lesson)use(&$group,&$data){
 		// 	$data['marks'][] = Helper::getMarks($group,$lesson);
 		// });
-		$data['count'] = $lessons->count();
+		$data['count'] = count($lessons);
 		Excel::create($name, function($excel) use(&$data) {
 			$excel->sheet('New sheet', function($sheet) use(&$data) {
 				$sheet->setHeight(array(2=>150));

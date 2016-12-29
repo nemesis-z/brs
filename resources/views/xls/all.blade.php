@@ -11,7 +11,7 @@
 	@for($j=0;$j<count($marks[0]["students"]);$j++)
 		<tr style="text-align: center;">
 			<td>{{$marks[0]["students"][$j]["name"]}}</td>
-			@for($i=0;$i<$lessons->count();$i++)
+			@for($i=0;$i<count($lessons);$i++)
 				<td>{{$marks[$i]["marks"][$j]["avg"]["mark"]}}</td>
 			@endfor
 		</tr>

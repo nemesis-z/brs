@@ -54,6 +54,9 @@
 		<span>В группе не найдено студентов</span>
 	@endforelse
 	<h4>Предметы</h4>
+	<div style="margin-bottom: 10px;border-bottom: 1px solid #eee;">
+		<a href="/teacher/get/all/{{$group->id}}">Все баллы группы</a>
+	</div>
 	@forelse($tgls as $tgl)
 		<div class="row" style="border-bottom:1px solid #eee;padding-bottom:10px;margin-bottom:10px;">
 			<a class="col s5" href="/admin/lesson/{{$tgl->lesson->id}}">{{$tgl->lesson->name}} ({{$tgl->type_name()}})</a>
