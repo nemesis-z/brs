@@ -233,6 +233,6 @@
         @yield('script')
     });
     </script>
-    <div>{{ round(microtime(true) - LARAVEL_START,4) }}</div>
+    <div style="display:none;">{{ round(microtime(true) - LARAVEL_START,4) }}</div>
 </body>
 </html>

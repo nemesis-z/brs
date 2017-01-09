@@ -309,7 +309,7 @@ Route::get('/', function () {
 	});
 	return;*/
 	if(Auth::guest())return redirect('/login');
-	else return redirect('/teacher');
+	else return redirect(!Auth::user()->isAdmin()?'/teacher':'/admin');
 });
 
 Route::get('/login', 'Auth\AuthController@getLogin');

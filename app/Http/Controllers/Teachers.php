@@ -208,7 +208,7 @@ class teachers extends Controller {
 		    		'sem'=>$sem,
 		    		'ov'=>($sem%2==0?'весенний':'осенний'),
 		    		'fac'=>str_replace('факультета', '', $names[$group->fac]),
-		    		'crs'=>date('Y')-$group->year+$adds[1],
+		    		'crs'=>date('Y')-$group->year+$adds[1]+1, //recheck
 		    		'group'=>$group,
 		    		'lesson'=>$lesson,
 		    		'fc'=>Helper::type($tgl->type),
