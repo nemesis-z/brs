@@ -80,10 +80,10 @@
 		<td align="center" valign="middle" style="wrap-text: true;">Фамилия, имя, отчество</td>
 		<td align="center" valign="middle" style="wrap-text: true;">№ зачетной книжки</td>
 		<td align="center" valign="middle" style="wrap-text: true;">Баллы за семестр</td>
-		<td align="center" valign="middle" style="wrap-text: true;">Баллы за {{!$type?'экзамен':'зачет'}}</td>
+		<td align="center" valign="middle" style="wrap-text: true;">Баллы за {{$type==1?'экзамен':'зачет'}}</td>
 		<td align="center" valign="middle" style="wrap-text: true;">Итоговый балл</td>
-		<td align="center" valign="middle" style="wrap-text: true;">Отметка {{!$type?'об экзамене':'о зачете'}}</td>
-		<td align="center" valign="middle" style="wrap-text: true;">Дата сдачи {{!$type?'экзамена':'зачета'}}</td>
+		<td align="center" valign="middle" style="wrap-text: true;">{{$type==1?'Экзам. отметка':'Отметка о зачете'}}</td>
+		<td align="center" valign="middle" style="wrap-text: true;">Дата сдачи {{$type==1?'экзамена':'зачета'}}</td>
 		<td align="center" valign="middle">Подпись</td>
 	</tr>
 	<tr>
