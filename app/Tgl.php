@@ -26,6 +26,9 @@ class Tgl extends Model {
         return $this->belongsTo('App\User');
     }
     public function type_name() {
+        return Helper::type($this->type);
+    }
+    public function c_name() {
         return Helper::c($this->c);
     }
 }
